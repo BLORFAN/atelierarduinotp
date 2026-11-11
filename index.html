@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atelier Arduino × Tinkercad — 13 TP en rotation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3f6f6; --panel:#ffffff; --ink:#14232a; --muted:#5b6b72; --line:#d8e2e4;
+    --teal:#00878f; --teal-d:#006168; --teal-l:#e0f2f3;
+    --amber:#c77700; --amber-l:#fff3df; --blue:#2559c7; --blue-l:#e5edff;
+    --green:#1f8a4c; --green-l:#e3f5ea; --red:#c2372f; --red-l:#fde8e6;
+    --pcb:#0e3b40; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:"IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:16px}
+  code,pre,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+  a{color:var(--teal-d)}
+  header.top{background:var(--pcb);color:#e8f6f6;position:relative;overflow:hidden}
+  header.top::before{content:"";position:absolute;inset:0;opacity:.18;
+    background-image:radial-gradient(circle at 1px 1px,#7fd6d9 1.2px,transparent 1.6px);background-size:18px 18px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px;position:relative}
+  .brand{display:flex;align-items:center;gap:14px;padding:22px 0 10px}
+  .brand svg{flex:none}
+  .brand h1{margin:0;font-size:1.45rem;letter-spacing:.2px}
+  .brand p{margin:2px 0 0;color:#a9d8da;font-size:.95rem}
+  nav.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:0}
+  nav.tabs button{background:transparent;border:0;color:#bfe3e4;font:inherit;font-weight:600;padding:10px 14px;border-radius:10px 10px 0 0;cursor:pointer}
+  nav.tabs button:hover{color:#fff}
+  nav.tabs button.on{background:var(--bg);color:var(--pcb)}
+  main{padding:26px 0 60px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+  @media (max-width:860px){.grid2{grid-template-columns:1fr}}
+  h2{margin:0 0 12px;font-size:1.3rem}
+  h3{margin:20px 0 8px;font-size:1.05rem}
+  .muted{color:var(--muted)}
+  .small{font-size:.88rem}
+  label{display:block;font-weight:600;font-size:.92rem;margin:12px 0 4px}
+  input[type=text],input[type=password],input[type=url],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fbfdfd}
+  input:focus,textarea:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:transparent}
+  .btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:9px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer;background:var(--teal);color:#fff}
+  .btn:hover{background:var(--teal-d)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--teal-d);border:1px solid var(--line)}
+  .btn.ghost:hover{background:var(--teal-l)}
+  .btn.green{background:var(--green)} .btn.red{background:var(--red)} .btn.amber{background:var(--amber)}
+  .btn.sm{padding:6px 10px;font-size:.85rem}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.4px}
+  .b-libre{background:var(--green-l);color:var(--green)}
+  .b-cours{background:var(--amber-l);color:var(--amber)}
+  .b-valid{background:var(--blue-l);color:var(--blue)}
+  .b-fait{background:var(--teal-l);color:var(--teal-d)}
+  .alert{border-radius:10px;padding:12px 14px;margin:12px 0;font-size:.95rem}
+  .alert.info{background:var(--teal-l);border:1px solid #b6e0e2}
+  .alert.warn{background:var(--amber-l);border:1px solid #f1d29b}
+  .alert.err{background:var(--red-l);border:1px solid #f1bab5}
+  .alert.ok{background:var(--green-l);border:1px solid #b5e2c6}
+  /* board */
+  .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .slot{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;font-size:.86rem;min-height:84px}
+  .slot .n{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--teal-d)}
+  .slot .t{font-weight:600;margin:2px 0 6px;line-height:1.25}
+  .slot.me{outline:2px solid var(--teal)}
+  .slot.done{background:#f6fbfb}
+  /* tp */
+  .tp-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+  .tp-num{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--teal-d);font-weight:600;letter-spacing:.6px}
+  .tp-title{font-size:1.6rem;margin:2px 0 6px;line-height:1.2}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{background:#eef3f4;border-radius:99px;padding:2px 10px;font-size:.8rem;color:#33474e}
+  table{border-collapse:collapse;width:100%;font-size:.92rem}
+  th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+  th{background:#f2f7f7;font-weight:600}
+  ol.steps{padding-left:22px} ol.steps li{margin:5px 0}
+  .codebox{position:relative;margin-top:8px}
+  pre.code{background:#0f2a2e;color:#d7f1ef;border-radius:10px;padding:16px;overflow:auto;font-size:.86rem;line-height:1.55;margin:0}
+  .codebox .btn{position:absolute;top:8px;right:8px}
+  .checklist label{display:flex;gap:10px;font-weight:500;align-items:flex-start;margin:8px 0;cursor:pointer}
+  .checklist input{margin-top:4px;width:18px;height:18px;accent-color:var(--teal)}
+  .progress{height:10px;background:#e3eaeb;border-radius:99px;overflow:hidden}
+  .progress > i{display:block;height:100%;background:var(--teal)}
+  .defi{background:#fff8ec;border-left:4px solid var(--amber);padding:10px 14px;border-radius:0 10px 10px 0}
+  .matrix{overflow:auto}
+  .matrix table{min-width:760px}
+  .matrix td.c{text-align:center;font-weight:700}
+  .c-ok{background:var(--green-l);color:var(--green)} .c-cours{background:var(--amber-l);color:var(--amber)} .c-val{background:var(--blue-l);color:var(--blue)}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:.92rem;z-index:20;max-width:90vw}
+  .modal-bg{position:fixed;inset:0;background:rgba(10,30,34,.45);display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
+  .modal{background:#fff;border-radius:14px;padding:22px;max-width:460px;width:100%}
+  footer{color:var(--muted);font-size:.82rem;padding:18px 0;border-top:1px solid var(--line)}
+  .who{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}
+  .avatar{width:42px;height:42px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .section-sep{height:1px;background:var(--line);margin:22px 0}
+  .steps-guide li{margin:8px 0}
+  .kbd{font-family:"IBM Plex Mono",monospace;background:#eef3f4;border:1px solid var(--line);border-radius:5px;padding:0 6px;font-size:.85em}
+
+  /* ---- couleurs & illustrations ---- */
+  body{background:#f4f7fb radial-gradient(circle at 8% 12%,#ffe9d6 0,transparent 32%) , radial-gradient(circle at 92% 30%,#e3f1ff 0,transparent 30%);background-attachment:fixed}
+  header.top{background:linear-gradient(120deg,#1b2b6b 0%,#00878f 50%,#22b07d 80%,#f5a623 100%)}
+  nav.tabs button.on{background:#f4f7fb}
+  svg text{font-family:"IBM Plex Sans",system-ui,sans-serif}
+  .card{box-shadow:0 2px 10px rgba(20,40,60,.05)}
+  .tp-band{background:linear-gradient(120deg,var(--c),color-mix(in srgb,var(--c) 50%,#ffffff));color:#fff;border-radius:12px;padding:16px 18px;margin:-6px -6px 6px}
+  .tp-band .tp-num{color:#fff;opacity:.92}
+  .tp-band .chip{background:rgba(255,255,255,.24);color:#fff}
+  .band-icon{background:rgba(255,255,255,.88);border-radius:14px;padding:8px;width:100px;height:100px;display:flex;align-items:center;justify-content:center}
+  .band-icon svg{max-width:84px;max-height:84px}
+  .kit{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:10px}
+  .kit-item{background:linear-gradient(180deg,#ffffff,color-mix(in srgb,var(--c) 10%,#ffffff));border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;position:relative}
+  .kit-item svg{height:82px;width:100%}
+  .kit-item .q{position:absolute;top:6px;right:8px;background:var(--c);color:#fff;border-radius:99px;font-size:.75rem;font-weight:700;padding:1px 8px}
+  .kit-item .nm{font-size:.82rem;font-weight:600;margin-top:4px}
+  .figure{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;overflow:auto}
+  .figure svg.schema{display:block;margin:0 auto;max-width:100%;height:auto}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin-top:8px;justify-content:center;align-items:center}
+  .legend i{display:inline-block;width:22px;height:5px;border-radius:3px;vertical-align:middle;margin-right:6px}
+  details.cab{margin-top:8px} details.cab summary{cursor:pointer;font-weight:600;color:var(--teal-d)}
+  .slot{border-top:5px solid var(--c);background:linear-gradient(180deg,color-mix(in srgb,var(--c) 8%,#fff),#fff)}
+  .slot svg{height:56px;width:100%;margin:4px 0}
+  .slot .n{color:var(--c)}
+  .comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+  .comp-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;border-top:5px solid var(--c)}
+  .comp-card .pic{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 16%,#fff),#fff);padding:14px;height:150px;display:flex;align-items:center;justify-content:center}
+  .comp-card .pic svg{max-height:122px;max-width:100%}
+  .comp-card .bd{padding:12px 14px}
+  .comp-card h4{margin:0 0 4px;font-size:1.02rem}
+  .tip{font-size:.86rem;background:#f4f8f9;border-radius:8px;padding:6px 9px;margin-top:8px}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+        <rect x="3" y="7" width="40" height="32" rx="5" fill="#00878f"/>
+        <rect x="9" y="13" width="12" height="8" rx="1.5" fill="#0e3b40"/>
+        <circle cx="31" cy="17" r="3" fill="#ffd166"/>
+        <g fill="#cfeff0"><rect x="9" y="29" width="3" height="5"/><rect x="14" y="29" width="3" height="5"/><rect x="19" y="29" width="3" height="5"/><rect x="24" y="29" width="3" height="5"/><rect x="29" y="29" width="3" height="5"/><rect x="34" y="29" width="3" height="5"/></g>
+      </svg>
+      <div>
+        <h1>Atelier Arduino × Tinkercad</h1>
+        <p>13 travaux pratiques en rotation — chaque élève fait tous les TP, un TP à la fois, jamais deux élèves sur le même.</p>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+  </div>
+</header>
+<main><div class="wrap" id="app"><div class="card">Chargement de l'atelier…</div></div></main>
+<div class="wrap"><footer id="foot"></footer></div>
+<div id="overlay"></div>
+
+<script>
+/* =========================================================
+   1. CONTENU : LES 13 TP
+   ========================================================= */
+const TPS = [
+{
+  id:"tp01", titre:"Faire clignoter une LED", niveau:1, duree:"45 min",
+  notions:["pinMode","digitalWrite","delay","setup / loop"],
+  objectif:"Découvrir la structure d'un programme Arduino et allumer/éteindre une LED externe à intervalle régulier.",
+  materiel:["1 Arduino Uno R3","1 petite platine d'essai","1 LED rouge","1 résistance 220 Ω","2 fils"],
+  cablage:[["Broche 13","Résistance 220 Ω → anode (+, patte coudée) de la LED"],["Cathode (−) de la LED","GND"]],
+  etapes:[
+    "Dans Tinkercad, créez un nouveau circuit et glissez un Arduino Uno R3 et une petite platine d'essai.",
+    "Placez la LED sur la platine. Survolez ses pattes : l'anode (+) est la patte coudée.",
+    "Reliez la broche 13 à la résistance, puis la résistance à l'anode. Reliez la cathode à GND.",
+    "Ouvrez Code → Texte, supprimez le code proposé et collez le code ci-dessous.",
+    "Cliquez sur « Démarrer la simulation » : la LED doit clignoter toutes les secondes."
+  ],
+  code:`// TP1 - Faire clignoter une LED
+const int LED = 13;
+
+void setup() {
+  pinMode(LED, OUTPUT);     // la broche 13 devient une sortie
+}
+
+void loop() {
+  digitalWrite(LED, HIGH);  // allume la LED (5 V)
+  delay(1000);              // attend 1000 ms = 1 s
+  digitalWrite(LED, LOW);   // éteint la LED (0 V)
+  delay(1000);
+}`,
+  questions:["À quoi sert la résistance de 220 Ω ? Que se passerait-il sans elle ?","Quelle est la différence entre setup() et loop() ?","Comment faire clignoter la LED deux fois plus vite ?"],
+  defi:"Faites clignoter la LED en code Morse : S.O.S (3 courts, 3 longs, 3 courts).",
+  criteres:["Le circuit est câblé avec une résistance en série avec la LED","La LED clignote pendant la simulation","J'ai modifié le délai et observé le changement","J'ai répondu aux questions dans mon cahier"]
+},
+{
+  id:"tp02", titre:"Feu tricolore", niveau:1, duree:"50 min",
+  notions:["plusieurs sorties","séquence","constantes"],
+  objectif:"Piloter trois LED pour reproduire le cycle d'un feu de circulation.",
+  materiel:["1 Arduino Uno R3","1 platine d'essai","3 LED (rouge, orange/jaune, verte)","3 résistances 220 Ω","fils"],
+  cablage:[["Broche 10","220 Ω → LED rouge (+)"],["Broche 9","220 Ω → LED orange (+)"],["Broche 8","220 Ω → LED verte (+)"],["Cathodes des 3 LED","GND (ligne − de la platine)"]],
+  etapes:[
+    "Placez les trois LED côte à côte, chacune avec sa résistance.",
+    "Reliez la ligne bleue (−) de la platine au GND de l'Arduino, puis les trois cathodes à cette ligne.",
+    "Reliez chaque résistance à sa broche (10, 9, 8).",
+    "Collez le code puis lancez la simulation. Chronométrez les durées."
+  ],
+  code:`// TP2 - Feu tricolore
+const int ROUGE = 10;
+const int ORANGE = 9;
+const int VERT = 8;
+
+void setup() {
+  pinMode(ROUGE, OUTPUT);
+  pinMode(ORANGE, OUTPUT);
+  pinMode(VERT, OUTPUT);
+}
+
+void allumer(int r, int o, int v) {
+  digitalWrite(ROUGE, r);
+  digitalWrite(ORANGE, o);
+  digitalWrite(VERT, v);
+}
+
+void loop() {
+  allumer(LOW, LOW, HIGH);  // vert
+  delay(5000);
+  allumer(LOW, HIGH, LOW);  // orange
+  delay(2000);
+  allumer(HIGH, LOW, LOW);  // rouge
+  delay(5000);
+}`,
+  questions:["Pourquoi a-t-on créé une fonction allumer() ?","Quelle est la durée totale d'un cycle ?","Pourquoi utiliser des constantes ROUGE, ORANGE, VERT plutôt que les numéros ?"],
+  defi:"Ajoutez un feu piéton (LED rouge + LED verte) qui passe au vert uniquement quand le feu voitures est rouge.",
+  criteres:["Les 3 LED ont chacune leur résistance","Le cycle vert → orange → rouge fonctionne","Les durées respectent 5 s / 2 s / 5 s","J'ai répondu aux questions"]
+},
+{
+  id:"tp03", titre:"Bouton poussoir et LED", niveau:1, duree:"50 min",
+  notions:["digitalRead","entrée numérique","résistance pull-down","if / else"],
+  objectif:"Lire l'état d'un bouton et allumer la LED tant que le bouton est appuyé.",
+  materiel:["1 Arduino Uno R3","1 platine d'essai","1 bouton-poussoir","1 résistance 10 kΩ","1 LED","1 résistance 220 Ω","fils"],
+  cablage:[["5V","Une patte du bouton"],["Patte opposée du bouton","Broche 2 ET résistance 10 kΩ → GND (pull-down)"],["Broche 13","220 Ω → LED (+)"],["LED (−)","GND"]],
+  etapes:[
+    "Placez le bouton à cheval sur la rainure centrale de la platine.",
+    "Câblez le bouton avec la résistance de 10 kΩ vers GND : sans elle, l'entrée « flotte ».",
+    "Câblez la LED sur la broche 13 comme au TP1.",
+    "Collez le code, lancez la simulation et cliquez sur le bouton."
+  ],
+  code:`// TP3 - Bouton poussoir et LED
+const int BOUTON = 2;
+const int LED = 13;
+
+void setup() {
+  pinMode(BOUTON, INPUT);
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  int etat = digitalRead(BOUTON);  // HIGH si appuyé, LOW sinon
+  if (etat == HIGH) {
+    digitalWrite(LED, HIGH);
+  } else {
+    digitalWrite(LED, LOW);
+  }
+}`,
+  questions:["Quel est le rôle de la résistance de 10 kΩ ?","Que renvoie digitalRead() quand le bouton est relâché ?","Comment inverser le comportement (LED allumée quand on n'appuie pas) ?"],
+  defi:"Supprimez la résistance de 10 kΩ et utilisez pinMode(BOUTON, INPUT_PULLUP). Adaptez le câblage (bouton entre broche 2 et GND) et le code (logique inversée).",
+  criteres:["Le bouton est câblé avec une résistance de tirage","La LED s'allume uniquement quand j'appuie","J'ai testé plusieurs appuis en simulation","J'ai répondu aux questions"]
+},
+{
+  id:"tp04", titre:"Télérupteur et moniteur série", niveau:2, duree:"55 min",
+  notions:["Serial","front montant","variable booléenne","anti-rebond"],
+  objectif:"Chaque appui sur le bouton inverse l'état de la LED, et le nombre d'appuis s'affiche dans le moniteur série.",
+  materiel:["1 Arduino Uno R3","1 platine d'essai","1 bouton-poussoir","1 résistance 10 kΩ","1 LED","1 résistance 220 Ω","fils"],
+  cablage:[["Même câblage que le TP3","Bouton sur la broche 2 (pull-down 10 kΩ), LED sur la broche 13"]],
+  etapes:[
+    "Reprenez le montage du TP3 (vous pouvez dupliquer votre circuit).",
+    "Collez le code ci-dessous.",
+    "Ouvrez le « Moniteur série » en bas de la fenêtre de code, puis lancez la simulation.",
+    "Appuyez plusieurs fois : la LED bascule et le compteur augmente de 1 à chaque appui."
+  ],
+  code:`// TP4 - Télérupteur et moniteur série
+const int BOUTON = 2;
+const int LED = 13;
+bool etatLed = false;
+int ancienEtat = LOW;
+int compteur = 0;
+
+void setup() {
+  pinMode(BOUTON, INPUT);
+  pinMode(LED, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Pret ! Appuie sur le bouton.");
+}
+
+void loop() {
+  int etat = digitalRead(BOUTON);
+  // front montant : le bouton vient juste d'être appuyé
+  if (etat == HIGH && ancienEtat == LOW) {
+    etatLed = !etatLed;
+    digitalWrite(LED, etatLed);
+    compteur++;
+    Serial.print("Nombre d'appuis : ");
+    Serial.println(compteur);
+    delay(50);  // anti-rebond
+  }
+  ancienEtat = etat;
+}`,
+  questions:["Pourquoi compare-t-on etat et ancienEtat ?","Que signifie l'opérateur ! dans etatLed = !etatLed ?","À quoi sert Serial.begin(9600) ?"],
+  defi:"Toutes les 5 pressions, faites clignoter la LED 3 fois rapidement et affichez « Bravo ! » dans le moniteur série.",
+  criteres:["La LED change d'état à chaque appui (et pas en continu)","Le compteur s'affiche dans le moniteur série","J'ai compris le rôle de la variable ancienEtat","J'ai répondu aux questions"]
+},
+{
+  id:"tp05", titre:"Potentiomètre et lecture analogique", niveau:2, duree:"45 min",
+  notions:["analogRead","CAN 10 bits","conversion en volts","traceur série"],
+  objectif:"Lire la position d'un potentiomètre (0 à 1023) et calculer la tension correspondante.",
+  materiel:["1 Arduino Uno R3","1 potentiomètre","fils"],
+  cablage:[["Borne 1 du potentiomètre","5V"],["Curseur (borne du milieu)","A0"],["Borne 2 du potentiomètre","GND"]],
+  etapes:[
+    "Placez un potentiomètre et survolez ses bornes pour repérer le curseur (milieu).",
+    "Câblez-le comme indiqué dans le tableau.",
+    "Collez le code, ouvrez le moniteur série et lancez la simulation.",
+    "Tournez le potentiomètre (cliquez-glissez dessus) et observez les valeurs. Essayez aussi le mode graphique du moniteur."
+  ],
+  code:`// TP5 - Potentiomètre et lecture analogique
+const int POT = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int valeur = analogRead(POT);            // 0 à 1023
+  float tension = valeur * 5.0 / 1023.0;   // conversion en volts
+  Serial.print("Valeur : ");
+  Serial.print(valeur);
+  Serial.print("   Tension : ");
+  Serial.print(tension);
+  Serial.println(" V");
+  delay(200);
+}`,
+  questions:["Pourquoi la valeur maximale est-elle 1023 ?","Quelle tension correspond à la valeur 512 ?","Pourquoi utilise-t-on 5.0 et non 5 dans le calcul ?"],
+  defi:"Affichez en plus un pourcentage (0 à 100 %) avec la fonction map().",
+  criteres:["Le potentiomètre est câblé 5V / A0 / GND","Les valeurs 0 à 1023 s'affichent dans le moniteur","La tension calculée est cohérente (0 à 5 V)","J'ai répondu aux questions"]
+},
+{
+  id:"tp06", titre:"Variateur de lumière (PWM)", niveau:2, duree:"45 min",
+  notions:["analogWrite","PWM","map()","broches ~"],
+  objectif:"Régler la luminosité d'une LED avec un potentiomètre grâce à la modulation de largeur d'impulsion.",
+  materiel:["1 Arduino Uno R3","1 platine d'essai","1 potentiomètre","1 LED","1 résistance 220 Ω","fils"],
+  cablage:[["Potentiomètre","5V / curseur → A0 / GND (comme au TP5)"],["Broche ~9","220 Ω → LED (+)"],["LED (−)","GND"]],
+  etapes:[
+    "Repérez sur l'Arduino les broches marquées « ~ » : seules elles savent faire du PWM.",
+    "Câblez le potentiomètre et la LED sur la broche 9.",
+    "Collez le code, lancez la simulation et tournez le potentiomètre."
+  ],
+  code:`// TP6 - Variateur de lumière (PWM)
+const int POT = A0;
+const int LED = 9;   // broche PWM (~)
+
+void setup() {
+  pinMode(LED, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int valeur = analogRead(POT);                     // 0 à 1023
+  int luminosite = map(valeur, 0, 1023, 0, 255);    // 0 à 255
+  analogWrite(LED, luminosite);
+  Serial.println(luminosite);
+  delay(20);
+}`,
+  questions:["Que signifie PWM ? Expliquez avec vos mots.","Pourquoi convertir 0–1023 en 0–255 ?","Que se passe-t-il si on branche la LED sur la broche 7 ?"],
+  defi:"Sans potentiomètre : faites « respirer » la LED (luminosité qui monte puis descend en douceur) avec une boucle for.",
+  criteres:["La LED est sur une broche PWM (~)","La luminosité varie avec le potentiomètre","J'utilise la fonction map()","J'ai répondu aux questions"]
+},
+{
+  id:"tp07", titre:"LED RVB multicolore", niveau:2, duree:"50 min",
+  notions:["synthèse additive","fonctions avec paramètres","analogWrite x3"],
+  objectif:"Mélanger le rouge, le vert et le bleu pour obtenir toutes les couleurs.",
+  materiel:["1 Arduino Uno R3","1 platine d'essai","1 LED RVB (cathode commune)","3 résistances 220 Ω","fils"],
+  cablage:[["Broche ~11","220 Ω → patte Rouge"],["Broche ~10","220 Ω → patte Verte"],["Broche ~9","220 Ω → patte Bleue"],["Patte commune (la plus longue)","GND"]],
+  etapes:[
+    "Placez une LED RVB. Dans ses propriétés, vérifiez que la polarité est « cathode commune ».",
+    "Survolez chaque patte pour identifier Rouge, Vert, Bleu et la cathode commune.",
+    "Câblez chaque couleur avec sa résistance vers les broches 11, 10 et 9.",
+    "Collez le code et lancez la simulation."
+  ],
+  code:`// TP7 - LED RVB multicolore
+const int R = 11;
+const int V = 10;
+const int B = 9;
+
+void couleur(int r, int v, int b) {
+  analogWrite(R, r);
+  analogWrite(V, v);
+  analogWrite(B, b);
+}
+
+void setup() {
+  pinMode(R, OUTPUT);
+  pinMode(V, OUTPUT);
+  pinMode(B, OUTPUT);
+}
+
+void loop() {
+  couleur(255, 0, 0);     delay(1000);  // rouge
+  couleur(0, 255, 0);     delay(1000);  // vert
+  couleur(0, 0, 255);     delay(1000);  // bleu
+  couleur(255, 255, 0);   delay(1000);  // jaune
+  couleur(0, 255, 255);   delay(1000);  // cyan
+  couleur(255, 0, 255);   delay(1000);  // magenta
+  couleur(255, 255, 255); delay(1000);  // blanc
+}`,
+  questions:["Quelles couleurs faut-il mélanger pour obtenir du jaune ?","Pourquoi faut-il une résistance par couleur ?","Quelle couleur obtient-on avec couleur(255, 128, 0) ?"],
+  defi:"Ajoutez un potentiomètre qui fait défiler toutes les couleurs de l'arc-en-ciel.",
+  criteres:["La LED RVB est câblée avec 3 résistances","Les 7 couleurs s'affichent","J'ai créé au moins une nouvelle couleur","J'ai répondu aux questions"]
+},
+{
+  id:"tp08", titre:"Buzzer et mélodie", niveau:2, duree:"45 min",
+  notions:["tone / noTone","fréquence","tableaux","boucle for"],
+  objectif:"Jouer une mélodie avec un buzzer piézo en stockant les notes dans un tableau.",
+  materiel:["1 Arduino Uno R3","1 piézo (buzzer)","fils"],
+  cablage:[["Broche 8","Borne + du piézo"],["Borne − du piézo","GND"]],
+  etapes:[
+    "Placez un piézo et reliez-le à la broche 8 et à GND.",
+    "Collez le code (mélodie « Au clair de la lune ») puis lancez la simulation.",
+    "Activez le son de votre ordinateur pour entendre la mélodie."
+  ],
+  code:`// TP8 - Buzzer et mélodie
+const int BUZZER = 8;
+
+// fréquences des notes (en Hz)
+const int NOTE_DO = 262;
+const int NOTE_RE = 294;
+const int NOTE_MI = 330;
+const int NOTE_FA = 349;
+const int NOTE_SOL = 392;
+
+int melodie[] = {NOTE_DO, NOTE_DO, NOTE_DO, NOTE_RE, NOTE_MI, NOTE_RE,
+                 NOTE_DO, NOTE_MI, NOTE_RE, NOTE_RE, NOTE_DO};
+int durees[]  = {400, 400, 400, 400, 800, 800,
+                 400, 400, 400, 400, 1200};
+
+void setup() {
+  for (int i = 0; i < 11; i++) {
+    tone(BUZZER, melodie[i], durees[i]);
+    delay(durees[i] * 1.3);   // petite pause entre les notes
+  }
+  noTone(BUZZER);
+}
+
+void loop() {
+  // la mélodie est jouée une seule fois (dans setup)
+}`,
+  questions:["Qu'est-ce qu'un tableau en programmation ?","Pourquoi la boucle va-t-elle de 0 à 10 ?","Que se passe-t-il si on double toutes les fréquences ?"],
+  defi:"Ajoutez un bouton : la mélodie se joue à chaque appui. Ou composez votre propre mélodie de 8 notes.",
+  criteres:["Le buzzer est câblé broche 8 / GND","La mélodie se joue correctement","J'ai modifié au moins une note ou une durée","J'ai répondu aux questions"]
+},
+{
+  id:"tp09", titre:"Lampe automatique (photorésistance)", niveau:3, duree:"55 min",
+  notions:["capteur de lumière","pont diviseur","seuil","calibration"],
+  objectif:"Allumer automatiquement une LED quand il fait sombre.",
+  materiel:["1 Arduino Uno R3","1 platine d'essai","1 photorésistance","1 résistance 10 kΩ","1 LED","1 résistance 220 Ω","fils"],
+  cablage:[["5V","Patte 1 de la photorésistance"],["Patte 2 de la photorésistance","A0 ET résistance 10 kΩ → GND"],["Broche 13","220 Ω → LED (+)"],["LED (−)","GND"]],
+  etapes:[
+    "Câblez la photorésistance en pont diviseur avec la résistance de 10 kΩ.",
+    "Câblez la LED sur la broche 13.",
+    "Collez le code, ouvrez le moniteur série et lancez la simulation.",
+    "Cliquez sur la photorésistance pendant la simulation : un curseur permet de changer la lumière. Notez les valeurs en plein jour et dans le noir, puis ajustez SEUIL."
+  ],
+  code:`// TP9 - Lampe automatique
+const int CAPTEUR = A0;
+const int LED = 13;
+int SEUIL = 500;   // à ajuster après vos mesures
+
+void setup() {
+  pinMode(LED, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int lumiere = analogRead(CAPTEUR);
+  Serial.print("Lumiere : ");
+  Serial.println(lumiere);
+
+  if (lumiere < SEUIL) {
+    digitalWrite(LED, HIGH);   // il fait sombre : on allume
+  } else {
+    digitalWrite(LED, LOW);
+  }
+  delay(200);
+}`,
+  questions:["Quand la lumière augmente, la valeur lue augmente-t-elle ou diminue-t-elle ? Pourquoi ?","Quelle valeur de SEUIL avez-vous choisie et pourquoi ?","Citez deux objets du quotidien qui utilisent ce principe."],
+  defi:"Faites varier la luminosité de la LED (PWM) de façon progressive : plus il fait sombre, plus elle éclaire.",
+  criteres:["La photorésistance est câblée en pont diviseur","J'ai relevé les valeurs jour / nuit dans le moniteur","La LED s'allume automatiquement dans le noir","J'ai répondu aux questions"]
+},
+{
+  id:"tp10", titre:"Thermomètre à LED (TMP36)", niveau:3, duree:"55 min",
+  notions:["capteur de température","float","conditions multiples","else if"],
+  objectif:"Mesurer la température avec un TMP36 et l'indiquer avec trois LED (froid / normal / chaud).",
+  materiel:["1 Arduino Uno R3","1 platine d'essai","1 capteur de température TMP36","3 LED (bleue, verte, rouge)","3 résistances 220 Ω","fils"],
+  cablage:[["Broche « alimentation » du TMP36","5V"],["Broche « Vout » (milieu)","A0"],["Broche « GND » du TMP36","GND"],["Broches 2 / 3 / 4","220 Ω → LED bleue / verte / rouge"],["Cathodes des LED","GND"]],
+  etapes:[
+    "Placez le TMP36 et survolez ses broches pour lire leur nom (alimentation, Vout, GND).",
+    "Câblez le capteur puis les trois LED.",
+    "Collez le code, ouvrez le moniteur série et lancez la simulation.",
+    "Cliquez sur le capteur pendant la simulation pour changer la température et vérifiez les LED."
+  ],
+  code:`// TP10 - Thermomètre à LED
+const int CAPTEUR = A0;
+const int BLEUE = 2;
+const int VERTE = 3;
+const int ROUGE = 4;
+
+void setup() {
+  pinMode(BLEUE, OUTPUT);
+  pinMode(VERTE, OUTPUT);
+  pinMode(ROUGE, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int valeur = analogRead(CAPTEUR);
+  float tension = valeur * 5.0 / 1024.0;
+  float temperature = (tension - 0.5) * 100.0;   // formule du TMP36
+
+  Serial.print("Temperature : ");
+  Serial.print(temperature);
+  Serial.println(" C");
+
+  digitalWrite(BLEUE, LOW);
+  digitalWrite(VERTE, LOW);
+  digitalWrite(ROUGE, LOW);
+
+  if (temperature < 20) {
+    digitalWrite(BLEUE, HIGH);
+  } else if (temperature <= 30) {
+    digitalWrite(VERTE, HIGH);
+  } else {
+    digitalWrite(ROUGE, HIGH);
+  }
+  delay(500);
+}`,
+  questions:["Expliquez la formule (tension − 0,5) × 100.","Pourquoi éteint-on les 3 LED avant de tester la température ?","Quelle LED s'allume à 30 °C ? à 30,5 °C ?"],
+  defi:"Ajoutez le buzzer du TP8 : une alarme sonne au-dessus de 40 °C.",
+  criteres:["Le TMP36 est câblé correctement (alimentation / Vout / GND)","La température s'affiche dans le moniteur","Les 3 LED réagissent aux bons seuils","J'ai répondu aux questions"]
+},
+{
+  id:"tp11", titre:"Servomoteur piloté", niveau:3, duree:"50 min",
+  notions:["bibliothèque Servo","#include","objet","angle 0–180°"],
+  objectif:"Commander l'angle d'un servomoteur avec un potentiomètre.",
+  materiel:["1 Arduino Uno R3","1 micro-servomoteur","1 potentiomètre","fils"],
+  cablage:[["Fil « puissance » du servo (rouge)","5V"],["Fil « masse » du servo (marron/noir)","GND"],["Fil « signal » du servo (orange/jaune)","Broche ~9"],["Potentiomètre","5V / curseur → A0 / GND"]],
+  etapes:[
+    "Placez un micro-servomoteur et survolez ses 3 fils pour identifier puissance, masse et signal.",
+    "Câblez le servo et le potentiomètre.",
+    "Collez le code (la ligne #include ajoute la bibliothèque Servo) et lancez la simulation.",
+    "Tournez le potentiomètre : le bras du servo suit le mouvement."
+  ],
+  code:`// TP11 - Servomoteur piloté
+#include <Servo.h>
+
+Servo monServo;
+const int POT = A0;
+
+void setup() {
+  monServo.attach(9);   // signal du servo sur la broche 9
+}
+
+void loop() {
+  int valeur = analogRead(POT);
+  int angle = map(valeur, 0, 1023, 0, 180);
+  monServo.write(angle);
+  delay(15);
+}`,
+  questions:["Qu'est-ce qu'une bibliothèque ? Pourquoi l'utiliser ?","Quelle est la plage d'angles du servomoteur ?","Citez un objet réel qui utilise un servomoteur."],
+  defi:"Supprimez le potentiomètre et programmez un « essuie-glace » : le servo balaie automatiquement de 0° à 180° puis revient.",
+  criteres:["Les 3 fils du servo sont correctement branchés","Le servo suit le potentiomètre","J'utilise la bibliothèque Servo","J'ai répondu aux questions"]
+},
+{
+  id:"tp12", titre:"Radar de recul (capteur à ultrasons)", niveau:3, duree:"60 min",
+  notions:["pulseIn","vitesse du son","fonction qui renvoie une valeur","tone"],
+  objectif:"Mesurer une distance et émettre des bips de plus en plus rapides quand un obstacle approche.",
+  materiel:["1 Arduino Uno R3","1 capteur de distance à ultrasons (version 4 broches Trig/Echo)","1 piézo","1 LED + 220 Ω","fils"],
+  cablage:[["VCC du capteur","5V"],["GND du capteur","GND"],["Trig","Broche 7"],["Echo","Broche 6"],["Piézo","Broche 8 / GND"],["LED","Broche 13 → 220 Ω → LED → GND"]],
+  etapes:[
+    "Placez le capteur à ultrasons à 4 broches (VCC, Trig, Echo, GND).",
+    "Câblez le capteur, le piézo et la LED.",
+    "Collez le code, ouvrez le moniteur série et lancez la simulation.",
+    "Cliquez sur le capteur : déplacez l'objet virtuel devant lui et observez la distance et les bips."
+  ],
+  code:`// TP12 - Radar de recul
+const int TRIG = 7;
+const int ECHO = 6;
+const int BUZZER = 8;
+const int LED = 13;
+
+void setup() {
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+  pinMode(LED, OUTPUT);
+  Serial.begin(9600);
+}
+
+long mesurerDistance() {
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG, HIGH);       // impulsion de 10 microsecondes
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+  long duree = pulseIn(ECHO, HIGH);  // durée de l'aller-retour (µs)
+  return duree * 0.034 / 2;          // distance en cm
+}
+
+void loop() {
+  long distance = mesurerDistance();
+  Serial.print("Distance : ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  if (distance > 0 && distance < 100) {
+    digitalWrite(LED, HIGH);
+    tone(BUZZER, 1000, 50);
+    delay(50);
+    digitalWrite(LED, LOW);
+    delay(distance * 5);   // plus c'est près, plus ça bipe vite
+  } else {
+    noTone(BUZZER);
+    delay(200);
+  }
+}`,
+  questions:["Pourquoi divise-t-on par 2 dans le calcul de la distance ?","D'où vient la valeur 0,034 ?","Que fait la fonction mesurerDistance() et que renvoie-t-elle ?"],
+  defi:"Sous 20 cm, le buzzer sonne en continu et la LED reste allumée (danger !).",
+  criteres:["Le capteur est câblé (VCC, GND, Trig 7, Echo 6)","La distance s'affiche dans le moniteur","Les bips accélèrent quand l'objet s'approche","J'ai répondu aux questions"]
+},
+{
+  id:"tp13", titre:"Afficheur LCD 16×2", niveau:3, duree:"60 min",
+  notions:["bibliothèque LiquidCrystal","setCursor","millis()","affichage"],
+  objectif:"Afficher un message et un chronomètre sur un écran LCD de 2 lignes de 16 caractères.",
+  materiel:["1 Arduino Uno R3","1 platine d'essai","1 écran LCD 16 x 2","1 potentiomètre (contraste)","1 résistance 220 Ω","fils"],
+  cablage:[["LCD GND (VSS) et RW","GND"],["LCD VCC (VDD)","5V"],["LCD V0 (contraste)","Curseur du potentiomètre (bornes vers 5V et GND)"],["LCD RS","Broche 12"],["LCD E (Enable)","Broche 11"],["LCD D4 / D5 / D6 / D7","Broches 5 / 4 / 3 / 2"],["LCD LED anode (+)","220 Ω → 5V"],["LCD LED cathode (−)","GND"]],
+  etapes:[
+    "Placez l'écran LCD 16 x 2 (version parallèle, pas I2C) au-dessus de la platine.",
+    "Survolez chaque broche de l'écran pour lire son nom et câblez-la selon le tableau. Prenez votre temps : c'est le câblage le plus long de l'atelier.",
+    "Collez le code et lancez la simulation. Si l'écran reste vide, tournez le potentiomètre de contraste.",
+    "Modifiez le message pour afficher votre prénom."
+  ],
+  code:`// TP13 - Afficheur LCD 16x2
+#include <LiquidCrystal.h>
+
+// LiquidCrystal(RS, E, D4, D5, D6, D7)
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+void setup() {
+  lcd.begin(16, 2);          // 16 colonnes, 2 lignes
+  lcd.print("Bonjour !");
+}
+
+void loop() {
+  lcd.setCursor(0, 1);       // colonne 0, ligne 1 (la 2e)
+  lcd.print("Temps : ");
+  lcd.print(millis() / 1000);
+  lcd.print(" s   ");
+  delay(200);
+}`,
+  questions:["Pourquoi les lignes sont-elles numérotées 0 et 1 ?","Que renvoie la fonction millis() ?","Pourquoi ajoute-t-on des espaces après « s » ?"],
+  defi:"Combinez avec le TP10 : affichez la température mesurée par le TMP36 sur l'écran.",
+  criteres:["L'écran est entièrement câblé (alimentation, contraste, données)","Le message s'affiche sur la première ligne","Le chronomètre défile sur la deuxième ligne","J'ai répondu aux questions"]
+}
+];
+const NB = TPS.length;
+
+/* Schémas de câblage : composants + fils (A:xx = broche Arduino) */
+const SCHEMAS = {
+  tp01:{comps:[{id:"r",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"led",type:"led",opts:{couleur:"rouge"},label:"LED rouge"}],
+        wires:[["A:13","r:a"],["r:b","led:+"],["led:-","A:GND"]]},
+  tp02:{comps:[{id:"r1",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"l1",type:"led",opts:{couleur:"rouge"},label:"Rouge"},
+               {id:"r2",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"l2",type:"led",opts:{couleur:"orange"},label:"Orange"},
+               {id:"r3",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"l3",type:"led",opts:{couleur:"verte"},label:"Verte"}],
+        wires:[["A:10","r1:a"],["r1:b","l1:+"],["l1:-","A:GND"],["A:9","r2:a"],["r2:b","l2:+"],["l2:-","A:GND"],["A:8","r3:a"],["r3:b","l3:+"],["l3:-","A:GND"]]},
+  tp03:{comps:[{id:"bt",type:"button",label:"Bouton"},{id:"rp",type:"resistor",opts:{valeur:"10k"},label:"Pull-down"},{id:"r",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"led",type:"led",opts:{couleur:"rouge"},label:"LED"}],
+        wires:[["A:5V","bt:1"],["bt:2","A:2"],["bt:2","rp:a"],["rp:b","A:GND"],["A:13","r:a"],["r:b","led:+"],["led:-","A:GND"]]},
+  tp05:{comps:[{id:"pot",type:"pot",label:"Potentiomètre"}],
+        wires:[["A:5V","pot:1"],["pot:W","A:A0"],["pot:2","A:GND"]]},
+  tp06:{comps:[{id:"pot",type:"pot",label:"Potentiomètre"},{id:"r",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"led",type:"led",opts:{couleur:"jaune"},label:"LED"}],
+        wires:[["A:5V","pot:1"],["pot:W","A:A0"],["pot:2","A:GND"],["A:9","r:a"],["r:b","led:+"],["led:-","A:GND"]]},
+  tp07:{comps:[{id:"r1",type:"resistor",opts:{valeur:"220"},label:"Rouge"},{id:"r2",type:"resistor",opts:{valeur:"220"},label:"Vert"},{id:"r3",type:"resistor",opts:{valeur:"220"},label:"Bleu"},{id:"rgb",type:"rgb",label:"LED RVB"}],
+        wires:[["A:11","r1:a"],["r1:b","rgb:R"],["A:10","r2:a"],["r2:b","rgb:G"],["A:9","r3:a"],["r3:b","rgb:B"],["rgb:GND","A:GND"]]},
+  tp08:{comps:[{id:"pz",type:"piezo",label:"Piézo"}],
+        wires:[["A:8","pz:+"],["pz:-","A:GND"]]},
+  tp09:{comps:[{id:"ldr",type:"ldr",label:"Photorésistance"},{id:"rp",type:"resistor",opts:{valeur:"10k"},label:"Résistance"},{id:"r",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"led",type:"led",opts:{couleur:"blanche"},label:"LED"}],
+        wires:[["A:5V","ldr:1"],["ldr:2","A:A0"],["ldr:2","rp:a"],["rp:b","A:GND"],["A:13","r:a"],["r:b","led:+"],["led:-","A:GND"]]},
+  tp10:{comps:[{id:"t",type:"tmp36",label:"TMP36"},{id:"r1",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"l1",type:"led",opts:{couleur:"bleue"},label:"Bleue"},
+               {id:"r2",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"l2",type:"led",opts:{couleur:"verte"},label:"Verte"},{id:"r3",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"l3",type:"led",opts:{couleur:"rouge"},label:"Rouge"}],
+        wires:[["A:5V","t:+Vs"],["t:Vout","A:A0"],["t:GND","A:GND"],["A:2","r1:a"],["r1:b","l1:+"],["l1:-","A:GND"],["A:3","r2:a"],["r2:b","l2:+"],["l2:-","A:GND"],["A:4","r3:a"],["r3:b","l3:+"],["l3:-","A:GND"]]},
+  tp11:{comps:[{id:"sv",type:"servo",label:"Servomoteur"},{id:"pot",type:"pot",label:"Potentiomètre"}],
+        wires:[["sv:GND","A:GND"],["sv:5V","A:5V"],["sv:SIG","A:9"],["A:5V","pot:1"],["pot:W","A:A0"],["pot:2","A:GND"]]},
+  tp12:{comps:[{id:"hc",type:"hcsr04",label:"Capteur à ultrasons"},{id:"pz",type:"piezo",label:"Piézo"},{id:"r",type:"resistor",opts:{valeur:"220"},label:"Résistance"},{id:"led",type:"led",opts:{couleur:"rouge"},label:"LED"}],
+        wires:[["hc:VCC","A:5V"],["hc:Trig","A:7"],["hc:Echo","A:6"],["hc:GND","A:GND"],["A:8","pz:+"],["pz:-","A:GND"],["A:13","r:a"],["r:b","led:+"],["led:-","A:GND"]]},
+  tp13:{comps:[{id:"lcd",type:"lcd",label:"Écran LCD 16×2"},{id:"pot",type:"pot",label:"Contraste"},{id:"r",type:"resistor",opts:{valeur:"220"},label:"Rétroéclairage"}],
+        wires:[["lcd:VSS","A:GND"],["lcd:VDD","A:5V"],["lcd:V0","pot:W"],["pot:1","A:5V"],["pot:2","A:GND"],["lcd:RS","A:12"],["lcd:RW","A:GND"],["lcd:E","A:11"],["lcd:D4","A:5"],["lcd:D5","A:4"],["lcd:D6","A:3"],["lcd:D7","A:2"],["lcd:A","r:a"],["r:b","A:5V"],["lcd:K","A:GND"]]}
+};
+SCHEMAS.tp04 = SCHEMAS.tp03;
+const ICONES = {tp01:["led",{couleur:"rouge"}],tp02:["led",{couleur:"verte"}],tp03:["button",{}],tp04:["button",{}],tp05:["pot",{}],tp06:["led",{couleur:"jaune"}],tp07:["rgb",{}],tp08:["piezo",{}],tp09:["ldr",{}],tp10:["tmp36",{}],tp11:["servo",{}],tp12:["hcsr04",{}],tp13:["lcd",{}]};
+const TP_COLORS = ["#e53935","#fb8c00","#f4b400","#7cb342","#2e9d4f","#00a39a","#0097d6","#1e63d6","#5e4bd8","#8e24aa","#d81b80","#e8541e","#00897b"];
+function tpColor(tp) { return TP_COLORS[(tp.num - 1) % TP_COLORS.length]; }
+
+/* =========================================================
+   ILLUSTRATIONS (SVG dessinés : carte, composants, câblage)
+   ========================================================= */
+const GFX = (() => {
+  const P = 12.7, LEGC = "#a3adb5";
+  const LEDC = {rouge:["#ffc2c2","#e02424","#7a0b0b"], orange:["#ffd8a8","#ff8a00","#8a4300"], jaune:["#fff7b0","#f5c800","#8a6d00"], verte:["#c8f7cf","#1fbf45","#0a5c1c"], bleue:["#d3e8ff","#1f6fe0","#0b2f6b"], blanche:["#ffffff","#eef2f5","#a9b5bd"]};
+  const BANDS = {"220":["#d32f2f","#d32f2f","#6d3b1a","#c9a227"], "10k":["#6d3b1a","#111111","#f57c00","#c9a227"]};
+
+  function defs() {
+    let s = "";
+    for (const [k, [a, b, c]] of Object.entries(LEDC)) s += `<radialGradient id="g-led-${k}" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="${a}"/><stop offset=".45" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></radialGradient>`;
+    const lin = (id, stops, h) => `<linearGradient id="${id}" x1="0" y1="0" x2="${h ? 1 : 0}" y2="${h ? 0 : 1}">${stops.map((c, i) => `<stop offset="${i / (stops.length - 1)}" stop-color="${c}"/>`).join("")}</linearGradient>`;
+    s += lin("g-metal", ["#f7f9fa", "#bcc5cb", "#e6eaed"]);
+    s += lin("g-black", ["#555b62", "#26292d", "#0d0e10"]);
+    s += `<linearGradient id="g-pcb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#18aeb3"/><stop offset="1" stop-color="#00767c"/></linearGradient>`;
+    s += lin("g-beige", ["#f8e7c6", "#dcb97f", "#c49b5c"]);
+    s += lin("g-servo", ["#5b98f2", "#1f56b8"]);
+    s += lin("g-hc", ["#2f80ea", "#134ea3"]);
+    s += lin("g-lcd", ["#d2f57c", "#98c93f"]);
+    s += lin("g-lcdpcb", ["#43a447", "#23672a"]);
+    s += lin("g-bb", ["#fdfcf8", "#ebe9e1"]);
+    s += `<radialGradient id="g-btn" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#777e86"/><stop offset="1" stop-color="#16181b"/></radialGradient>`;
+    s += `<radialGradient id="g-rgb" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef1f5"/><stop offset="1" stop-color="#bcc4ce"/></radialGradient>`;
+    return `<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>${s}</defs></svg>`;
+  }
+
+  const leg = (d, w = 2.6, c = LEGC) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" font-size="${o.s || 9}" font-weight="${o.w || 700}" fill="${o.c || "#4a5a61"}" text-anchor="${o.a || "middle"}"${o.r ? ` transform="rotate(${o.r} ${x} ${y})"` : ""}${o.f ? ` font-family="${o.f}"` : ""}>${t}</text>`;
+
+  const C = {
+    led(o) {
+      const c = LEDC[o.couleur] ? o.couleur : "rouge", dk = LEDC[c][2];
+      return {w: 40, h: 120, pins: {"+": [27, 120], "-": [13, 120]}, svg:
+        leg("M13 58 V120") + leg("M27 58 V80 l5 6 l-5 6 V120") +
+        `<path d="M6 51 H34 V59 H8 Z" fill="url(#g-led-${c})" stroke="${dk}" stroke-width="1"/>` +
+        `<path d="M8 53 V28 A12 12 0 0 1 32 28 V53 Z" fill="url(#g-led-${c})" stroke="${dk}" stroke-width="1"/>` +
+        `<ellipse cx="15" cy="28" rx="3.2" ry="8" fill="#fff" opacity=".6"/>` +
+        `<path d="M17 50 V38 h6 l-3 -5" fill="none" stroke="${dk}" stroke-width="1" opacity=".55"/>` +
+        T(6, 112, "−", {s: 11}) + T(35, 112, "+", {s: 11})};
+    },
+    resistor(o) {
+      const v = BANDS[o.valeur] ? o.valeur : "220", b = BANDS[v];
+      return {w: 80, h: 70, pins: {a: [4, 70], b: [76, 70]}, svg:
+        leg("M4 70 V20 H18") + leg("M62 20 H76 V70") +
+        `<rect x="16" y="10" width="48" height="20" rx="9" fill="url(#g-beige)" stroke="#a9834c" stroke-width="1"/>` +
+        [24, 32, 40, 54].map((x, i) => `<rect x="${x}" y="10.6" width="4.5" height="18.8" fill="${b[i]}"/>`).join("") +
+        `<rect x="18" y="13" width="44" height="4" rx="2" fill="#fff" opacity=".35"/>` +
+        T(40, 48, v === "10k" ? "10 kΩ" : "220 Ω", {s: 11, c: "#5b4a2e"})};
+    },
+    button() {
+      return {w: 50, h: 84, pins: {"1": [12, 84], "2": [38, 84]}, svg:
+        leg("M12 50 V84") + leg("M38 50 V84") +
+        `<rect x="4" y="10" width="42" height="42" rx="4" fill="#2b2f33"/>` +
+        `<rect x="8" y="14" width="34" height="34" rx="3" fill="url(#g-metal)" stroke="#808a91"/>` +
+        `<circle cx="25" cy="31" r="12" fill="url(#g-btn)"/><circle cx="21" cy="27" r="3" fill="#fff" opacity=".3"/>` +
+        [[11, 17], [39, 17], [11, 45], [39, 45]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.8" fill="#666"/>`).join("") +
+        T(5, 80, "1", {s: 9}) + T(46, 80, "2", {s: 9})};
+    },
+    pot() {
+      return {w: 72, h: 104, pins: {"1": [18, 104], "W": [36, 104], "2": [54, 104]}, svg:
+        leg("M18 64 V104") + leg("M36 64 V104") + leg("M54 64 V104") +
+        `<rect x="6" y="46" width="60" height="22" rx="4" fill="#4a90e2" stroke="#2c6bb5"/>` +
+        `<circle cx="36" cy="38" r="27" fill="url(#g-metal)" stroke="#6b7780" stroke-width="1.5"/>` +
+        `<circle cx="36" cy="38" r="15" fill="#2a2d31" stroke="#111" stroke-width="2" stroke-dasharray="2 2"/>` +
+        `<line x1="36" y1="38" x2="36" y2="25" stroke="#fff" stroke-width="3" stroke-linecap="round"/>` +
+        T(11, 100, "1", {s: 9}) + T(44, 100, "W", {s: 8}) + T(62, 100, "2", {s: 9})};
+    },
+    piezo() {
+      return {w: 64, h: 94, pins: {"+": [24, 94], "-": [40, 94]}, svg:
+        leg("M24 56 V94") + leg("M40 56 V94") +
+        `<circle cx="32" cy="32" r="27" fill="url(#g-black)" stroke="#000"/>` +
+        `<circle cx="32" cy="32" r="19" fill="none" stroke="#3d4248" stroke-width="2"/>` +
+        `<circle cx="32" cy="32" r="4.5" fill="#000" stroke="#555"/>` +
+        T(19, 22, "+", {s: 12, c: "#fff"}) + T(16, 90, "+", {s: 10}) + T(48, 90, "−", {s: 10})};
+    },
+    ldr() {
+      return {w: 50, h: 104, pins: {"1": [19, 104], "2": [31, 104]}, svg:
+        leg("M19 40 V104") + leg("M31 40 V104") +
+        `<circle cx="25" cy="25" r="19" fill="#f4dcb6" stroke="#c49a63" stroke-width="1.5"/>` +
+        `<path d="M12 16 H37 V20 H13 V24 H37 V28 H13 V32 H35" fill="none" stroke="#b5462c" stroke-width="2.2" stroke-linejoin="round"/>` +
+        `<ellipse cx="19" cy="17" rx="7" ry="4" fill="#fff" opacity=".45"/>`};
+    },
+    tmp36() {
+      return {w: 52, h: 104, pins: {"+Vs": [14, 104], "Vout": [26, 104], "GND": [38, 104]}, svg:
+        leg("M14 52 V104") + leg("M26 52 V104") + leg("M38 52 V104") +
+        `<path d="M6 54 V24 A20 20 0 0 1 46 24 V54 Z" fill="url(#g-black)" stroke="#000"/>` +
+        `<rect x="9" y="30" width="34" height="20" fill="#2f3338"/>` +
+        T(26, 44, "TMP36", {s: 7.5, c: "#d0d4d8"}) + T(6, 96, "+", {s: 10}) + T(48, 96, "−", {s: 10})};
+    },
+    rgb() {
+      return {w: 62, h: 124, pins: {"R": [16, 124], "GND": [27, 124], "G": [38, 124], "B": [49, 124]}, svg:
+        leg("M16 60 V124") + leg("M27 60 V124") + leg("M38 60 V124") + leg("M49 60 V124") +
+        `<path d="M8 53 H54 V61 H8 Z" fill="url(#g-rgb)" stroke="#9aa4ae"/>` +
+        `<path d="M10 55 V30 A21 21 0 0 1 52 30 V55 Z" fill="url(#g-rgb)" stroke="#9aa4ae"/>` +
+        `<circle cx="24" cy="40" r="3.5" fill="#ff3b3b" opacity=".8"/><circle cx="31" cy="34" r="3.5" fill="#22c55e" opacity=".8"/><circle cx="38" cy="40" r="3.5" fill="#3b82f6" opacity=".8"/>` +
+        `<ellipse cx="18" cy="28" rx="3.5" ry="9" fill="#fff" opacity=".8"/>` +
+        T(16, 74, "R", {s: 8, c: "#d32f2f"}) + T(27, 74, "−", {s: 9}) + T(38, 74, "V", {s: 8, c: "#2e7d32"}) + T(49, 74, "B", {s: 8, c: "#1565c0"})};
+    },
+    servo() {
+      return {w: 120, h: 140, pins: {"GND": [50, 140], "5V": [60, 140], "SIG": [70, 140]}, svg:
+        `<rect x="6" y="44" width="108" height="11" rx="3" fill="url(#g-servo)" stroke="#173f8a"/>` +
+        `<rect x="18" y="30" width="84" height="48" rx="4" fill="url(#g-servo)" stroke="#173f8a"/>` +
+        `<circle cx="10" cy="49.5" r="3" fill="#fff"/><circle cx="110" cy="49.5" r="3" fill="#fff"/>` +
+        `<circle cx="44" cy="30" r="15" fill="#2a5fb8" stroke="#173f8a"/>` +
+        `<rect x="18" y="24" width="56" height="12" rx="6" fill="#fafafa" stroke="#c4c9ce" transform="rotate(-18 44 30)"/>` +
+        `<circle cx="44" cy="30" r="5" fill="#dfe3e6" stroke="#999"/>` +
+        T(80, 66, "SG90", {s: 10, c: "#fff"}) +
+        leg("M52 78 C52 92 50 96 50 108", 3.2, "#7b4a2a") + leg("M60 78 V108", 3.2, "#e53935") + leg("M68 78 C68 92 70 96 70 108", 3.2, "#fb8c00") +
+        `<rect x="43" y="106" width="34" height="13" rx="2" fill="#151515"/>` +
+        leg("M50 119 V140") + leg("M60 119 V140") + leg("M70 119 V140")};
+    },
+    hcsr04() {
+      const xs = [51, 63.7, 76.4, 89.1];
+      return {w: 140, h: 118, pins: {VCC: [xs[0], 118], Trig: [xs[1], 118], Echo: [xs[2], 118], GND: [xs[3], 118]}, svg:
+        `<rect x="0" y="0" width="140" height="84" rx="4" fill="url(#g-hc)" stroke="#0d3a7c"/>` +
+        [34, 106].map(cx => `<circle cx="${cx}" cy="32" r="25" fill="url(#g-metal)" stroke="#6f7a82"/><circle cx="${cx}" cy="32" r="19" fill="#2a2a2a"/><circle cx="${cx}" cy="32" r="13" fill="none" stroke="#474747" stroke-width="2"/><circle cx="${cx}" cy="32" r="7" fill="none" stroke="#474747" stroke-width="2"/>`).join("") +
+        `<rect x="62" y="5" width="16" height="7" rx="3.5" fill="url(#g-metal)"/>` +
+        T(70, 24, "HC-SR04", {s: 7, c: "#fff"}) +
+        ["VCC", "Trig", "Echo", "Gnd"].map((t, i) => T(xs[i] + 2.5, 76, t, {s: 7, c: "#fff", a: "start", r: -90})).join("") +
+        `<rect x="44" y="80" width="52" height="10" rx="1.5" fill="#151515"/>` +
+        xs.map(x => leg(`M${x} 90 V118`)).join("")};
+    },
+    lcd() {
+      const names = ["VSS", "VDD", "V0", "RS", "RW", "E", "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "A", "K"];
+      const pins = {}; names.forEach((n, i) => pins[n] = [40 + i * P, 170]);
+      return {w: 430, h: 170, pins, svg:
+        `<rect x="0" y="0" width="430" height="122" rx="5" fill="url(#g-lcdpcb)" stroke="#1b4f20"/>` +
+        [[9, 9], [421, 9], [9, 113], [421, 113]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.5" fill="#e8ece6" stroke="#9fb39c"/>`).join("") +
+        `<rect x="22" y="12" width="386" height="76" rx="3" fill="#1a1a1a"/>` +
+        `<rect x="32" y="20" width="366" height="60" rx="2" fill="url(#g-lcd)"/>` +
+        T(44, 46, "Bonjour !", {s: 22, w: 600, c: "#1d3b12", a: "start", f: "IBM Plex Mono, monospace"}) +
+        T(44, 72, "Temps : 12 s", {s: 22, w: 600, c: "#1d3b12", a: "start", f: "IBM Plex Mono, monospace"}) +
+        names.map((n, i) => T(40 + i * P + 2.5, 108, n, {s: 6.5, c: "#fff", a: "end", r: -90})).join("") +
+        `<rect x="33" y="112" width="${15 * P + 14}" height="10" rx="1.5" fill="#151515"/>` +
+        names.map((n, i) => leg(`M${40 + i * P} 122 V170`)).join("")};
+    }
+  };
+
+  /* ----- Carte Arduino Uno ----- */
+  const BW = 343, BH = 267, TX0 = 92, TX1 = TX0 + 10 * P + 8, BX0 = 118, BX1 = BX0 + 8 * P + 8;
+  const TOP1 = ["SCL", "SDA", "AREF", "GND", "13", "12", "~11", "~10", "~9", "8"], TOP2 = ["7", "~6", "~5", "4", "~3", "2", "TX 1", "RX 0"];
+  const BOT1 = ["", "IOREF", "RESET", "3.3V", "5V", "GND", "GND", "Vin"], BOT2 = ["A0", "A1", "A2", "A3", "A4", "A5"];
+  const key = l => l.replace("~", "").replace(/^(TX|RX) /, "");
+  const APINS = {};
+  TOP1.forEach((l, i) => { APINS[key(l)] = [TX0 + i * P, 11, "top"]; });
+  TOP2.forEach((l, i) => { APINS[key(l)] = [TX1 + i * P, 11, "top"]; });
+  BOT1.forEach((l, i) => { if (l === "GND") { if (!APINS.GND_B) APINS.GND_B = [BX0 + i * P, BH - 11, "bottom"]; } else if (l) APINS[key(l)] = [BX0 + i * P, BH - 11, "bottom"]; });
+  BOT2.forEach((l, i) => { APINS[l] = [BX1 + i * P, BH - 11, "bottom"]; });
+
+  function arduino(used = new Set()) {
+    let s = `<rect x="0" y="0" width="${BW}" height="${BH}" rx="10" fill="url(#g-pcb)" stroke="#00656a" stroke-width="2"/>`;
+    s += `<g stroke="#7fe3e6" stroke-opacity=".28" stroke-width="2" fill="none"><path d="M70 122 H140 L160 104 H220"/><path d="M60 160 H130 L148 140"/><path d="M262 100 H312 V146"/><path d="M200 232 V214 H300"/><path d="M150 60 H250 L262 72"/></g>`;
+    for (const [x, y] of [[66, 14], [330, 46], [330, 236], [78, 254]]) s += `<circle cx="${x}" cy="${y}" r="6.5" fill="#f2f4f5" stroke="#d6dde0" stroke-width="2"/>`;
+    s += `<rect x="-12" y="48" width="78" height="58" rx="3" fill="url(#g-metal)" stroke="#7b868d" stroke-width="1.5"/><rect x="-12" y="58" width="16" height="38" fill="#9aa4ab"/><rect x="6" y="64" width="40" height="26" rx="2" fill="#d5dbdf" stroke="#8d979e"/>`;
+    s += `<rect x="-10" y="185" width="68" height="48" rx="5" fill="url(#g-black)"/><rect x="-10" y="197" width="14" height="24" fill="#111"/><circle cx="24" cy="209" r="8" fill="#000" stroke="#444" stroke-width="2"/>`;
+    s += `<rect x="20" y="12" width="26" height="26" rx="3" fill="url(#g-metal)" stroke="#7b868d"/><circle cx="33" cy="25" r="7" fill="#d93a3a" stroke="#8b1a1a"/>`;
+    s += `<rect x="86" y="64" width="26" height="26" rx="2" fill="url(#g-black)" transform="rotate(45 99 77)"/>`;
+    s += `<rect x="100" y="140" width="38" height="13" rx="6.5" fill="url(#g-metal)" stroke="#7b868d"/>`;
+    for (const cx of [86, 112]) s += `<circle cx="${cx}" cy="216" r="11" fill="#2b2b2b"/><circle cx="${cx}" cy="216" r="8" fill="url(#g-metal)"/><path d="M${cx - 5} 216 h10 M${cx} 211 v10" stroke="#777" stroke-width="1.2"/>`;
+    for (let i = 0; i < 14; i++) { const x = 156 + i * 11.2; s += `<rect x="${x}" y="144" width="5" height="7" fill="#c9d0d5"/><rect x="${x}" y="185" width="5" height="7" fill="#c9d0d5"/>`; }
+    s += `<rect x="150" y="150" width="162" height="36" rx="2" fill="url(#g-black)"/><circle cx="157" cy="168" r="4" fill="#0a0a0a"/>` + T(238, 172, "ATMEGA328P", {s: 9, c: "#9aa3a9"});
+    s += `<rect x="124" y="50" width="10" height="6" rx="1" fill="#ffb300"/>` + T(138, 56, "L", {s: 8, c: "#fff", a: "start"});
+    s += `<rect x="124" y="62" width="10" height="6" rx="1" fill="#ffd54f"/>` + T(138, 68, "TX", {s: 7, c: "#fff", a: "start"});
+    s += `<rect x="124" y="74" width="10" height="6" rx="1" fill="#ffd54f"/>` + T(138, 80, "RX", {s: 7, c: "#fff", a: "start"});
+    s += `<rect x="300" y="112" width="10" height="6" rx="1" fill="#5cff7a"/>` + T(314, 118, "ON", {s: 7, c: "#fff", a: "start"});
+    s += `<g fill="none" stroke="#fff" stroke-width="4.5"><circle cx="192" cy="116" r="10"/><circle cx="214" cy="116" r="10"/></g><path d="M187 116 h10 M209 116 h10 M214 111 v10" stroke="#fff" stroke-width="2.2"/>`;
+    s += T(232, 126, "UNO", {s: 28, w: 800, c: "#fff", a: "start"}) + T(182, 140, "ARDUINO", {s: 11, w: 700, c: "#e6fbfb", a: "start"});
+    s += T(TX1 + 3.5 * P, 68, "DIGITAL (PWM ~)", {s: 7.5, c: "#e6fbfb"});
+    s += T(BX0 + 4.5 * P, BH - 60, "POWER", {s: 7.5, c: "#e6fbfb"}) + T(BX1 + 2.5 * P, BH - 60, "ANALOG IN", {s: 7.5, c: "#e6fbfb"});
+    const header = (x0, labels, y, top) => {
+      let h = `<rect x="${x0 - 7}" y="${y - 7}" width="${(labels.length - 1) * P + 14}" height="14" rx="1.5" fill="#1a1a1a"/>`;
+      labels.forEach((l, i) => {
+        const px = x0 + i * P;
+        h += `<rect x="${px - 3.5}" y="${y - 3.5}" width="7" height="7" fill="#3a3a3a"/><rect x="${px - 2}" y="${y - 2}" width="4" height="4" fill="#050505"/>`;
+        if (l) h += top ? T(px + 3, 22, l, {s: 7.5, c: "#fff", a: "end", r: -90}) : T(px + 3, BH - 22, l, {s: 7.5, c: "#fff", a: "start", r: -90});
+      });
+      return h;
+    };
+    s += header(TX0, TOP1, 11, true) + header(TX1, TOP2, 11, true) + header(BX0, BOT1, BH - 11, false) + header(BX1, BOT2, BH - 11, false);
+    for (const k of used) { const p = APINS[k]; if (p) s += `<circle cx="${p[0]}" cy="${p[1]}" r="7.5" fill="none" stroke="#ffd23f" stroke-width="3"/>`; }
+    return s;
+  }
+
+  /* ----- Schéma de câblage automatique ----- */
+  const PAL = ["#ff8f00", "#43a047", "#1e88e5", "#8e24aa", "#f9a825", "#00acc1", "#d81b60", "#6d4c41", "#7cb342", "#5e35b1", "#3949ab", "#00897b"];
+  function schema(spec) {
+    const comps = {};
+    const list = spec.comps.map(c => { const g = C[c.type](c.opts || {}); const o = {...c, g}; comps[c.id] = o; return o; });
+    const gap = 36, rowW = list.reduce((a, c) => a + c.g.w, 0) + gap * (list.length - 1);
+    const maxH = Math.max(...list.map(c => c.g.h));
+    const boardX = 50, top = 40, compBottom = top + maxH;
+    let x = Math.max(30, boardX + (BW - rowW) / 2);
+    list.forEach(c => { c.x = x; c.y = compBottom - c.g.h; x += c.g.w + gap; });
+    const nW = spec.wires.length, LS = 9;
+    const laneY0 = compBottom + 22, boardY = laneY0 + nW * LS + 24;
+    const used = new Set();
+    const ep = ref => {
+      const [id, pn] = ref.split(":");
+      if (id === "A") { const p = APINS[pn]; used.add(pn); return {x: boardX + p[0], y: boardY + p[1], kind: p[2], key: pn}; }
+      const c = comps[id], p = c.g.pins[pn];
+      return {x: c.x + p[0], y: c.y + p[1], kind: "comp"};
+    };
+    let pi = 0;
+    const wires = spec.wires.map(([a, b, col]) => {
+      const A = ep(a), B = ep(b);
+      const keys = [A.key, B.key];
+      const color = col || (keys.some(k => k && k.startsWith("GND")) ? "#202124" : keys.some(k => k === "5V" || k === "3.3V") ? "#e53935" : PAL[pi++ % PAL.length]);
+      const bot = A.kind === "bottom" ? A : B.kind === "bottom" ? B : null;
+      return {A, B, color, bot};
+    });
+    const det = wires.filter(w => w.bot).sort((p, q) => p.bot.x - q.bot.x);
+    const rest = wires.filter(w => !w.bot);
+    det.forEach((w, i) => { w.lane = i; w.j = det.length - 1 - i; });
+    rest.forEach((w, i) => { w.lane = det.length + i; });
+    const ybOf = j => boardY + BH + 16 + j * 9, xrOf = j => boardX + BW + 18 + j * 10;
+    const legs = (E, w, Y) => E.kind === "bottom"
+      ? [[xrOf(w.j), Y], [xrOf(w.j), ybOf(w.j)], [E.x, ybOf(w.j)], [E.x, E.y]]
+      : [[E.x, Y], [E.x, E.y]];
+    let paths = "", dots = "";
+    wires.forEach(w => {
+      const Y = laneY0 + w.lane * LS;
+      const pts = [...legs(w.A, w, Y).reverse(), ...legs(w.B, w, Y)];
+      const d = "M" + pts.map(p => p.join(" ")).join(" L");
+      paths += `<path d="${d}" fill="none" stroke="#fff" stroke-width="7.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+      paths += `<path d="${d}" fill="none" stroke="${w.color}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>`;
+      for (const E of [w.A, w.B]) if (E.kind === "comp") dots += `<circle cx="${E.x}" cy="${E.y}" r="3.6" fill="${w.color}" stroke="#fff" stroke-width="1.2"/>`;
+    });
+    const W = Math.max(x - gap + 30, xrOf(det.length) + 24);
+    const H = (det.length ? ybOf(det.length - 1) : boardY + BH) + 24;
+    let s = `<svg class="schema" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Schéma de câblage">`;
+    list.forEach(c => { s += `<g transform="translate(${c.x} ${c.y})">${c.g.svg}</g>` + T(c.x + c.g.w / 2, c.y - 10, c.label || "", {s: 11, c: "#26363d"}); });
+    s += `<g transform="translate(${boardX} ${boardY})">${arduino(used)}</g>`;
+    s += paths + dots + `</svg>`;
+    return s;
+  }
+
+  function icon(type, opts = {}, cls = "") {
+    if (type === "arduino") return `<svg class="${cls}" viewBox="-16 -4 ${BW + 22} ${BH + 8}">${arduino()}</svg>`;
+    if (type === "breadboard") return breadboard(false, cls);
+    const g = C[type](opts);
+    return `<svg class="${cls}" viewBox="-6 -6 ${g.w + 12} ${g.h + 12}">${g.svg}</svg>`;
+  }
+
+  function breadboard(annot = true, cls = "") {
+    const cols = 30, px = 13, x0 = 34, W = x0 * 2 + (cols - 1) * px, rowsY = [62, 75, 88, 101, 114, 150, 163, 176, 189, 202];
+    let s = `<rect x="4" y="4" width="${W - 8}" height="252" rx="8" fill="url(#g-bb)" stroke="#cfccc0"/>`;
+    s += `<rect x="4" y="130" width="${W - 8}" height="10" fill="#e1ded3"/>`;
+    const rails = [[18, "#e53935", "+"], [31, "#1e63d6", "−"], [229, "#e53935", "+"], [242, "#1e63d6", "−"]];
+    if (annot) s += `<rect x="${x0 - 8}" y="${18 - 6}" width="${(cols - 1) * px + 16}" height="12" rx="6" fill="#e53935" opacity=".18"/><rect x="${x0 - 8}" y="${31 - 6}" width="${(cols - 1) * px + 16}" height="12" rx="6" fill="#1e63d6" opacity=".15"/>`;
+    if (annot) s += `<rect x="${x0 + 6 * px - 7}" y="54" width="14" height="68" rx="7" fill="#2e9d4f" opacity=".25"/><rect x="${x0 + 14 * px - 7}" y="142" width="14" height="68" rx="7" fill="#2e9d4f" opacity=".25"/>`;
+    for (const [y, c, sg] of rails) {
+      s += `<line x1="${x0 - 10}" y1="${y + (y < 100 ? -9 : 9)}" x2="${W - x0 + 10}" y2="${y + (y < 100 ? -9 : 9)}" stroke="${c}" stroke-width="2"/>` + T(14, y + 4, sg, {s: 12, c});
+      for (let i = 0; i < cols; i++) if (i % 6 !== 5) s += `<rect x="${x0 + i * px - 2.5}" y="${y - 2.5}" width="5" height="5" rx="1" fill="#55524a"/>`;
+    }
+    rowsY.forEach((y, r) => {
+      s += T(16, y + 3.5, "abcdefghij"[r], {s: 8, c: "#8a8677"});
+      for (let i = 0; i < cols; i++) s += `<rect x="${x0 + i * px - 2.5}" y="${y - 2.5}" width="5" height="5" rx="1" fill="#55524a"/>`;
+    });
+    for (let i = 0; i < cols; i += 5) s += T(x0 + i * px, 50, String(i + 1), {s: 7.5, c: "#8a8677"});
+    return `<svg class="${cls}" viewBox="0 0 ${W} 260">${s}</svg>`;
+  }
+
+  function arduinoAnnote() {
+    const ox = 250, oy = 80, W = 900, H = 430;
+    const call = (px, py, lx, ly, txt, side) => {
+      const ax = ox + px, ay = oy + py;
+      const lines = txt.split("|");
+      return `<path d="M${ax} ${ay} L${lx} ${ly}" stroke="#3b4a52" stroke-width="1.5" fill="none"/><circle cx="${ax}" cy="${ay}" r="5" fill="#ffd23f" stroke="#7a5b00"/>` +
+        lines.map((t, i) => T(side === "l" ? lx - 6 : lx + 6, ly + 4 + i * 15, t, {s: 12.5, w: i ? 500 : 700, c: i ? "#4a5a61" : "#14232a", a: side === "l" ? "end" : "start"})).join("");
+    };
+    let s = `<svg class="schema" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Carte Arduino Uno annotée"><g transform="translate(${ox} ${oy})">${arduino()}</g>`;
+    s += call(33, 25, 200, 40, "Bouton Reset|redémarre le programme", "l");
+    s += call(20, 77, 200, 120, "Port USB|programmer + alimenter", "l");
+    s += call(129, 53, 200, 200, "LED « L »|reliée à la broche 13", "l");
+    s += call(24, 209, 200, 300, "Prise d'alimentation|pile ou bloc 7–12 V", "l");
+    s += call(TX0 + 3 * P, 11, 372, 30, "GND = masse (0 V)", "l");
+    s += call(TX1 + 3 * P, 11, 640, 34, "Broches numériques 0 à 13|entrées / sorties, ~ = PWM", "r");
+    s += call(300, 168, 640, 200, "Microcontrôleur ATmega328P|le « cerveau » qui exécute ton code", "r");
+    s += call(BX1 + 2.5 * P, BH - 11, 640, 392, "Entrées analogiques A0 à A5|lisent une tension de 0 à 5 V", "r");
+    s += call(BX0 + 4.5 * P, BH - 11, 330, 400, "Alimentation|5V, 3.3V, GND, Vin", "l");
+    return s + `</svg>`;
+  }
+
+  return {defs, schema, icon, arduinoAnnote, breadboard, C};
+})();
+
+const COMPOSANTS = [
+  {type:"led", opts:{couleur:"rouge"}, nom:"LED (diode électroluminescente)", role:"Émet de la lumière quand le courant la traverse dans le bon sens.", tip:"La patte longue (coudée dans Tinkercad) est l'anode (+). Toujours avec une résistance de 220 Ω en série !", c:"#e53935"},
+  {type:"resistor", opts:{valeur:"220"}, nom:"Résistance", role:"Limite le courant pour protéger la LED et la carte. Sa valeur se lit grâce aux anneaux de couleur.", tip:"Rouge-rouge-marron = 220 Ω · Marron-noir-orange = 10 kΩ. Pas de sens de branchement.", c:"#c49b5c"},
+  {type:"button", opts:{}, nom:"Bouton-poussoir", role:"Ferme le circuit tant qu'on appuie dessus : c'est une entrée numérique (HIGH / LOW).", tip:"Placez-le à cheval sur la rainure centrale de la platine. Ajoutez une résistance de tirage de 10 kΩ.", c:"#455a64"},
+  {type:"pot", opts:{}, nom:"Potentiomètre", role:"Résistance réglable par un bouton rotatif : donne une tension entre 0 et 5 V.", tip:"Bornes extérieures sur 5V et GND, borne du milieu (curseur) sur une entrée analogique A0.", c:"#1e88e5"},
+  {type:"piezo", opts:{}, nom:"Buzzer piézo", role:"Produit un son dont la fréquence est réglée par la fonction tone().", tip:"Borne + sur une broche numérique, borne − sur GND.", c:"#37474f"},
+  {type:"ldr", opts:{}, nom:"Photorésistance (LDR)", role:"Sa résistance diminue quand la lumière augmente : c'est un capteur de lumière.", tip:"Montez-la en pont diviseur avec une résistance de 10 kΩ, le point milieu sur A0.", c:"#e8541e"},
+  {type:"tmp36", opts:{}, nom:"Capteur de température TMP36", role:"Donne une tension proportionnelle à la température : T(°C) = (V − 0,5) × 100.", tip:"Face plate vers vous : gauche = +5V, milieu = Vout (A0), droite = GND. Survolez les broches pour vérifier.", c:"#212121"},
+  {type:"rgb", opts:{}, nom:"LED RVB", role:"Trois LED (rouge, vert, bleu) dans un même boîtier : on mélange les couleurs.", tip:"Cathode commune = patte la plus longue sur GND. Une résistance par couleur.", c:"#8e24aa"},
+  {type:"servo", opts:{}, nom:"Micro-servomoteur", role:"Moteur qui se positionne à un angle précis entre 0° et 180°.", tip:"Marron = GND, rouge = 5V, orange = signal (broche PWM ~9).", c:"#1f56b8"},
+  {type:"hcsr04", opts:{}, nom:"Capteur à ultrasons HC-SR04", role:"Envoie un ultrason et mesure le temps de l'écho pour calculer une distance.", tip:"VCC → 5V, Trig → 7, Echo → 6, GND → GND.", c:"#134ea3"},
+  {type:"lcd", opts:{}, nom:"Écran LCD 16 × 2", role:"Affiche 2 lignes de 16 caractères grâce à la bibliothèque LiquidCrystal.", tip:"Le potentiomètre sur V0 règle le contraste. Si l'écran est vide, tournez-le !", c:"#2e7d32"}
+];
+const COMP_NOMS = Object.fromEntries(COMPOSANTS.map(c => [c.type, c.nom]));
+const TP_BY_ID = Object.fromEntries(TPS.map((t, i) => [t.id, Object.assign(t, {num: i + 1})]));
+
+/* =========================================================
+   2. ÉCHANGES AVEC LE SERVEUR (Google Apps Script)
+   ========================================================= */
+const MEMO = "atelier-arduino-eleve";
+const Store = {
+  mode: "init",                 // init | ok | horsGoogle
+  data: {eleves: {}, tps: {}, validations: {}, journal: []},
+  nbEleves: 0, url: "", adresse: "https://script.google.com/macros/s/AKfycbxPXy4pXt-CoOWhvFYwVtBlAsosM9RYvgfusjxSlj5a/dev", inscriptionLibre: true, enCours: false, erreurReseau: false
+};
+
+function api(fn, ...args) {
+  return new Promise((ok, ko) => {
+    if (!(window.google && google.script && google.script.run)) {
+      ko(new Error("Cette page doit être ouverte depuis l'adresse de l'application (Google Apps Script)."));
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(ok)
+      .withFailureHandler(e => ko(new Error(String(e && e.message || e).replace(/^(Error|Exception|Erreur)\s*:\s*/i, ""))))[fn](...args);
+  });
+}
+
+function appliquer(st, qui) {
+  if (!st) return;
+  Store.mode = "ok"; Store.erreurReseau = false; Store.erreur = "";
+  Store.data.tps = st.tps || {};
+  Store.data.validations = st.validations || {};
+  Store.data.eleves = st.eleves || {};
+  Store.data.journal = st.journal || [];
+  Store.nbEleves = st.nbEleves || 0;
+  if (st.url) Store.url = st.url;
+  if (st.adresse) Store.adresse = st.adresse;
+  if ("inscriptionLibre" in st) Store.inscriptionLibre = st.inscriptionLibre;
+  if (qui === "eleve" && st.me) S.me = st.me;
+  scheduleRender();
+}
+
+function identite() { return S.me ? {nom: S.me.nom, prenom: S.me.prenom, code: S.me.code} : null; }
+
+async function rafraichir() {
+  if (Store.enCours || Store.mode === "horsGoogle") return;
+  Store.enCours = true;
+  try {
+    if (S.prof) appliquer(await api("apiProf", S.pinActif), "prof");
+    else if (S.me) appliquer(await api("apiEtatEleve", identite()), "eleve");
+    else appliquer(await api("apiEtatPublic"), "public");
+  } catch (e) {
+    const m = e.message || "";
+    if (/doit être ouverte/.test(m)) { Store.mode = "horsGoogle"; render(); }
+    else if (S.prof && /code professeur|bloqué/i.test(m)) { S.prof = false; S.pinActif = ""; S.pinErr = m; render(); }
+    else if (S.me && /incorrect/i.test(m)) { deconnexion(); S.loginErr = "Ton inscription a été supprimée par le professeur. Reconnecte-toi."; render(); }
+    else { Store.erreurReseau = true; Store.erreur = m || "Erreur inconnue du serveur."; scheduleRender(); }
+  } finally { Store.enCours = false; }
+}
+setInterval(() => { if (!document.hidden) rafraichir(); }, 6000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) rafraichir(); });
+
+/* =========================================================
+   3. LOGIQUE DE L'ATELIER
+   ========================================================= */
+const S = {
+  view: "accueil", me: null,
+  login: {nom: "", prenom: "", code: ""}, loginErr: "", loginBusy: false,
+  checks: {}, lien: "", busy: false,
+  prof: false, pin: "", pinActif: "", pinErr: "", pinBusy: false, newpin: "",
+  profTp: null, remarques: {}, modal: null
+};
+
+function normCode(c) { return String(c || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, ""); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function fmtDate(t) { try { return t ? new Date(t).toLocaleString("fr-FR", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"}) : ""; } catch (e) { return ""; } }
+
+function lockOf(tpId) { return Store.data.tps[tpId] || null; }
+function currentTpOf(code) { return TPS.find(t => { const l = lockOf(t.id); return l && l.code === code; }) || null; }
+function doneOf(code) {
+  const s = new Set();
+  Object.values(Store.data.validations).forEach(v => { if (v.code === code) s.add(v.tp); });
+  return s;
+}
+function elevesTries() { return Object.values(Store.data.eleves).sort((a, b) => (a.rang ?? 99) - (b.rang ?? 99)); }
+
+async function connexion() {
+  const nom = S.login.nom.trim(), prenom = S.login.prenom.trim(), code = normCode(S.login.code);
+  S.loginErr = "";
+  if (!nom || !prenom || code.length < 2) { S.loginErr = "Remplis ton nom, ton prénom et ton code élève (au moins 2 lettres ou chiffres)."; return render(); }
+  S.loginBusy = true; render();
+  try {
+    const st = await api("apiConnexion", nom, prenom, code);
+    S.prof = false; S.pinActif = "";
+    appliquer(st, "eleve");
+    try { localStorage.setItem(MEMO, JSON.stringify(identite())); } catch (e) {}
+    S.view = "eleve"; S.login = {nom: "", prenom: "", code: ""};
+  } catch (e) { S.loginErr = e.message; }
+  S.loginBusy = false; render();
+}
+
+function deconnexion() {
+  S.me = null; S.view = "accueil"; S.lien = ""; S.checks = {};
+  try { localStorage.removeItem(MEMO); } catch (e) {}
+  Store.data.validations = {};
+  render(); rafraichir();
+}
+
+async function action(promesse, qui, msg) {
+  if (S.busy) return;
+  S.busy = true; render();
+  try { appliquer(await promesse, qui); if (msg) toast(msg); }
+  catch (e) { toast(e.message); }
+  S.busy = false; render();
+}
+
+function demanderValidation(tpId) {
+  return action(api("apiRendre", identite(), tpId, S.lien.trim()), "eleve", "Demande envoyée ! Le professeur va vérifier ton TP.");
+}
+function annulerDemande(tpId) { return action(api("apiAnnulerRendu", identite(), tpId), "eleve", "Demande annulée : tu peux encore modifier ton TP."); }
+
+/* --- Professeur --- */
+function estProf() { return S.prof; }
+async function connexionProf() {
+  S.pinBusy = true; S.pinErr = ""; render();
+  try {
+    const st = await api("apiProf", S.pin);
+    S.prof = true; S.pinActif = S.pin; S.pin = "";
+    appliquer(st, "prof");
+  } catch (e) { S.pinErr = e.message; }
+  S.pinBusy = false; render();
+}
+async function changerCodeProf() {
+  const p = (S.newpin || "").trim();
+  if (p.length < 4) { toast("Le code doit contenir au moins 4 caractères."); return; }
+  try { await api("apiChangerCode", S.pinActif, p); S.pinActif = p; S.newpin = ""; toast("Nouveau code professeur enregistré (jamais stocké en clair)."); }
+  catch (e) { toast(e.message); }
+  render();
+}
+function valider(tpId) {
+  const l = lockOf(tpId);
+  return action(api("apiValider", S.pinActif, tpId), "prof", l ? "TP" + TP_BY_ID[tpId].num + " validé pour " + l.prenom + ". Enregistré dans Google Sheets." : "");
+}
+function refuser(tpId) {
+  const rem = (S.remarques[tpId] || "À reprendre.").trim();
+  S.remarques[tpId] = "";
+  return action(api("apiRefuser", S.pinActif, tpId, rem), "prof", "TP renvoyé à l'élève avec ta remarque.");
+}
+function liberer(tpId) { return action(api("apiLiberer", S.pinActif, tpId), "prof", "TP" + TP_BY_ID[tpId].num + " libéré (sans validation)."); }
+function annulerValidation(id) {
+  const v = Store.data.validations[id]; if (!v) return;
+  return action(api("apiAnnulerValidation", S.pinActif, v.code, v.tp), "prof", "Validation annulée.");
+}
+function supprimerEleve(code) { return action(api("apiSupprimerEleve", S.pinActif, code), "prof", "Élève supprimé."); }
+function toutReinitialiser() { return action(api("apiReinitialiser", S.pinActif), "prof", "Atelier réinitialisé (le journal est conservé)."); }
+function basculerInscription() { return action(api("apiInscriptionLibre", S.pinActif, !Store.inscriptionLibre), "prof", ""); }
+
+/* =========================================================
+   4. AFFICHAGE
+   ========================================================= */
+let pending = false;
+function scheduleRender() {
+  const a = document.activeElement;
+  if (a && (a.tagName === "TEXTAREA" || (a.tagName === "INPUT" && a.type !== "checkbox"))) { pending = true; return; }
+  render();
+}
+document.addEventListener("focusout", () => { setTimeout(() => { if (pending) { pending = false; scheduleRender(); } }, 0); });
+
+let toastTimer;
+function toast(msg) {
+  if (!msg) return;
+  let el = document.querySelector(".toast");
+  if (!el) { el = document.createElement("div"); el.className = "toast"; document.body.appendChild(el); }
+  el.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.remove(), 4200);
+}
+
+function statutBadge(tpId) {
+  const l = lockOf(tpId);
+  if (!l) return `<span class="badge b-libre">Libre</span>`;
+  if (l.statut === "a_valider") return `<span class="badge b-valid">À valider</span>`;
+  return `<span class="badge b-cours">En cours</span>`;
+}
+function etoiles(n) { return "★".repeat(n) + "☆".repeat(3 - n); }
+
+function renderTabs() {
+  const tabs = [["accueil", S.me ? "🧑‍🎓 Mon espace" : "🔑 Connexion"], ["composants", "🔍 Découvrir le matériel"], ["guide", "🛠️ Prise en main Tinkercad"], ["tps", "🗂️ Tableau des 13 TP"], ["prof", "👩‍🏫 Espace professeur"]];
+  document.getElementById("tabs").innerHTML = tabs.map(([v, l]) => {
+    const on = (S.view === v) || (v === "accueil" && S.view === "eleve");
+    return `<button class="${on ? "on" : ""}" data-action="nav" data-v="${v}">${l}</button>`;
+  }).join("");
+}
+
+function renderFoot() {
+  const m = Store.mode === "ok" ? "Données enregistrées automatiquement dans Google Sheets (onglets protégés)." + (Store.erreurReseau ? " · ⚠️ connexion interrompue, nouvel essai dans quelques secondes." : "")
+    : Store.mode === "horsGoogle" ? "Page ouverte hors de Google Apps Script : rien n'est enregistré." : "Connexion…";
+  document.getElementById("foot").innerHTML = `${m} · Simulation sur <a href="https://www.tinkercad.com" target="_blank" rel="noopener">tinkercad.com</a> (Circuits).`;
+}
+
+function viewAccueil() {
+  const n = Store.nbEleves;
+  return `
+  <div class="grid2">
+    <div class="card">
+      <h2>Bienvenue dans l'atelier</h2>
+      <p>Tu vas apprendre à programmer une carte <b>Arduino Uno</b> en simulation sur <b>Tinkercad</b>. L'atelier compte <b>13 TP</b> progressifs, de la LED qui clignote jusqu'à l'écran LCD.</p>
+      <h3>Comment ça marche ?</h3>
+      <ol class="steps">
+        <li>Entre ton <b>nom</b>, ton <b>prénom</b> et ton <b>code élève</b> (donné par le professeur).</li>
+        <li>Un TP t'est attribué automatiquement. <b>Personne d'autre ne peut le prendre</b> tant que tu ne l'as pas terminé.</li>
+        <li>Réalise le montage et le programme dans Tinkercad, coche les critères de réussite puis clique sur <b>« J'ai terminé »</b>.</li>
+        <li>Le professeur vérifie et <b>valide</b> ton travail. Le TP redevient libre pour un camarade et tu reçois ton TP suivant.</li>
+        <li>On tourne jusqu'à ce que chacun ait fait les <b>13 TP</b>.</li>
+      </ol>
+      <div class="alert info small">Garde ton code élève secret : avec ton nom et ton prénom, c'est lui qui protège ta progression.</div>
+    </div>
+    <div class="card">
+      <h2>Connexion élève</h2>
+      ${Store.mode === "horsGoogle" ? `<div class="alert err small">Cette page doit être ouverte depuis l'adresse de l'application donnée par le professeur.</div>` : ""}
+      <form data-form="login">
+        <label for="f-nom">Nom</label>
+        <input id="f-nom" type="text" autocomplete="family-name" maxlength="60" data-bind="login.nom" value="${esc(S.login.nom)}" placeholder="ex. MARTIN">
+        <label for="f-prenom">Prénom</label>
+        <input id="f-prenom" type="text" autocomplete="given-name" maxlength="60" data-bind="login.prenom" value="${esc(S.login.prenom)}" placeholder="ex. Lina">
+        <label for="f-code">Code élève</label>
+        <input id="f-code" type="password" maxlength="20" autocomplete="off" data-bind="login.code" value="${esc(S.login.code)}" placeholder="ex. E07" style="text-transform:uppercase">
+        ${S.loginErr ? `<div class="alert err small">${esc(S.loginErr)}</div>` : ""}
+        <div style="margin-top:16px"><button class="btn" type="submit" ${S.loginBusy ? "disabled" : ""}>${S.loginBusy ? "Connexion…" : "Voir mon TP →"}</button></div>
+      </form>
+      <p class="muted small" style="margin-top:14px">${n} élève${n > 1 ? "s" : ""} inscrit${n > 1 ? "s" : ""} · ${TPS.filter(t => lockOf(t.id)).length} TP occupé(s) en ce moment</p>
+    </div>
+  </div>`;
+}
+
+function kitHTML(tp) {
+  const sc = SCHEMAS[tp.id], col = tpColor(tp);
+  const groups = new Map();
+  groups.set("arduino", {type: "arduino", opts: {}, n: 1, nom: "Arduino Uno R3"});
+  sc.comps.forEach(c => {
+    const k = c.type + JSON.stringify(c.opts || {});
+    if (groups.has(k)) groups.get(k).n++;
+    else {
+      let nom = COMP_NOMS[c.type] || c.type;
+      if (c.type === "led") nom = "LED " + (c.opts.couleur || "");
+      if (c.type === "resistor") nom = "Résistance " + (c.opts.valeur === "10k" ? "10 kΩ" : "220 Ω");
+      groups.set(k, {type: c.type, opts: c.opts || {}, n: 1, nom});
+    }
+  });
+  return [...groups.values()].map(g => `<div class="kit-item" style="--c:${col}">${g.n > 1 ? `<span class="q">×${g.n}</span>` : ""}${GFX.icon(g.type, g.opts)}<div class="nm">${esc(g.nom)}</div></div>`).join("") +
+    `<div class="kit-item" style="--c:${col}">${GFX.icon("breadboard")}<div class="nm">Platine d'essai + fils</div></div>`;
+}
+
+function viewTpDetail(tp, opts = {}) {
+  const col = tpColor(tp);
+  return `
+  <div class="tp-band" style="--c:${col}">
+    <div class="tp-head">
+      <div>
+        <div class="tp-num">TP ${String(tp.num).padStart(2, "0")} / ${NB}</div>
+        <div class="tp-title">${esc(tp.titre)}</div>
+        <div class="chips"><span class="chip">Niveau ${etoiles(tp.niveau)}</span><span class="chip">⏱ ${esc(tp.duree)}</span>${tp.notions.map(n => `<span class="chip mono">${esc(n)}</span>`).join("")}</div>
+      </div>
+      <div class="band-icon">${GFX.icon(ICONES[tp.id][0], ICONES[tp.id][1])}</div>
+    </div>
+    ${opts.badge ? `<div style="margin-top:10px">${opts.badge}</div>` : ""}
+  </div>
+  <h3>🎯 Objectif</h3><p>${esc(tp.objectif)}</p>
+  <h3>🧰 Matériel</h3>
+  <div class="kit">${kitHTML(tp)}</div>
+  <h3>🔌 Schéma de montage</h3>
+  <div class="figure">${GFX.schema(SCHEMAS[tp.id])}
+    <div class="legend"><span><i style="background:#e53935"></i>5V (+)</span><span><i style="background:#202124"></i>GND (masse, −)</span><span><i style="background:linear-gradient(90deg,#ff8f00,#43a047,#1e88e5)"></i>signaux (broches)</span><span><i style="background:#fff;border:2px solid #ffd23f;height:9px;width:9px;border-radius:50%"></i>broche utilisée</span></div>
+  </div>
+  <p class="small muted">Le schéma relie directement les composants pour bien voir le circuit. Dans Tinkercad, tu peux passer par la platine d'essai : deux trous d'une même colonne de 5 sont reliés entre eux.</p>
+  <details class="cab"><summary>Voir le tableau de câblage</summary>
+    <table><tr><th>Depuis</th><th>Vers</th></tr>${tp.cablage.map(([a, b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join("")}</table>
+  </details>
+  <h3>📋 Étapes</h3><ol class="steps">${tp.etapes.map(e => `<li>${esc(e)}</li>`).join("")}</ol>
+  <h3>💻 Code Arduino</h3>
+  <div class="codebox"><pre class="code"><code>${esc(tp.code)}</code></pre><button class="btn sm ghost" style="background:#fff" data-action="copy" data-tp="${tp.id}">Copier</button></div>
+  <h3>❓ Questions (à rédiger dans ton cahier)</h3><ol class="steps">${tp.questions.map(q => `<li>${esc(q)}</li>`).join("")}</ol>
+  <h3>🚀 Défi bonus</h3><div class="defi">${esc(tp.defi)}</div>`;
+}
+
+function viewEleve() {
+  const me = S.me;
+  if (!me) return viewAccueil();
+  const done = doneOf(me.code);
+  const pct = Math.round(done.size / NB * 100);
+  const tp = currentTpOf(me.code);
+  const l = tp ? lockOf(tp.id) : null;
+  let body = "";
+
+  if (done.size >= NB) {
+    body = `<div class="card"><h2>🎉 Bravo ${esc(me.prenom)} !</h2><p>Tu as terminé et fait valider les <b>13 TP</b> de l'atelier. Tu maîtrises maintenant les bases de l'Arduino.</p></div>`;
+  } else if (!tp) {
+    body = `<div class="card"><h2>Tous tes TP restants sont occupés</h2>
+      <p class="muted">Les TP qu'il te reste à faire sont pris par d'autres élèves. Dès que l'un d'eux est validé, il te sera attribué automatiquement : garde cette page ouverte.</p></div>`;
+  } else {
+    const checks = S.checks[tp.id] || (S.checks[tp.id] = tp.criteres.map(() => false));
+    const tousCoches = checks.every(Boolean);
+    let validation = "";
+    if (l.statut === "a_valider") {
+      validation = `<div class="alert info"><b>⏳ En attente de validation du professeur.</b><br>Tu as rendu ce TP le ${fmtDate(l.rendu)}. Il reste réservé à ton nom jusqu'à la validation. Pendant ce temps, attaque le défi bonus !</div>
+        <button class="btn ghost sm" data-action="annuler-demande" data-tp="${tp.id}" ${S.busy ? "disabled" : ""}>Annuler ma demande (je veux encore modifier)</button>`;
+    } else {
+      validation = `
+        ${l.remarque ? `<div class="alert err"><b>Remarque du professeur :</b> ${esc(l.remarque)}</div>` : ""}
+        <div class="checklist">${tp.criteres.map((c, i) => `<label><input type="checkbox" data-action="check" data-tp="${tp.id}" data-i="${i}" ${checks[i] ? "checked" : ""}> <span>${esc(c)}</span></label>`).join("")}</div>
+        <label for="f-lien">Lien de ton circuit Tinkercad (facultatif)</label>
+        <input id="f-lien" type="url" maxlength="500" data-bind="lien" value="${esc(S.lien)}" placeholder="https://www.tinkercad.com/things/…">
+        <div style="margin-top:14px" class="row">
+          <button class="btn green" data-action="demander" data-tp="${tp.id}" ${tousCoches && !S.busy ? "" : "disabled"}>${S.busy ? "Envoi…" : "✔ J'ai terminé : demander la validation"}</button>
+          ${tousCoches ? "" : `<span class="muted small">Coche tous les critères pour pouvoir rendre ton TP.</span>`}
+        </div>`;
+    }
+    body = `
+      <div class="card">${viewTpDetail(tp, {badge: statutBadge(tp.id)})}
+        <div class="section-sep"></div>
+        <h3>✅ Validation du TP</h3>
+        <p class="muted small">Étape 1 : toi, tu valides en cochant les critères et en rendant le TP. Étape 2 : le professeur vérifie et valide. Ensuite seulement, tu passes au TP suivant.</p>
+        ${validation}
+      </div>`;
+  }
+
+  const hist = [...done].map(id => TP_BY_ID[id]).filter(Boolean).sort((a, b) => a.num - b.num);
+  return `
+  <div class="who card">
+    <div class="row"><div class="avatar">${esc((me.prenom[0] || "") + (me.nom[0] || ""))}</div>
+      <div><b>${esc(me.prenom)} ${esc(me.nom)}</b><div class="muted small mono">Élève n°${(me.rang || 0) + 1}</div></div></div>
+    <div style="flex:1;min-width:200px;max-width:380px">
+      <div class="row small" style="justify-content:space-between"><span>Progression</span><b>${done.size} / ${NB} TP validés</b></div>
+      <div class="progress"><i style="width:${pct}%"></i></div>
+    </div>
+    <button class="btn ghost sm" data-action="logout">Se déconnecter</button>
+  </div>
+  ${body}
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Mes TP validés</h3>
+    ${hist.length ? `<div class="chips">${hist.map(t => `<span class="badge b-fait">✓ TP${t.num} · ${esc(t.titre)}</span>`).join("")}</div>` : `<p class="muted small">Aucun TP validé pour l'instant.</p>`}
+  </div>`;
+}
+
+function viewTableau() {
+  const meCode = S.me && S.me.code;
+  const done = meCode ? doneOf(meCode) : new Set();
+  return `
+  <div class="card">
+    <h2>Tableau des 13 TP</h2>
+    <p class="muted">Un TP occupé est réservé à un seul élève jusqu'à sa validation par le professeur. ${meCode ? "Ton TP est entouré ; les TP que tu as déjà validés sont marqués ✓." : ""}</p>
+    <div class="board">${TPS.map(t => {
+      const l = lockOf(t.id);
+      const mine = l && l.code === meCode;
+      return `<div class="slot ${mine ? "me" : ""} ${done.has(t.id) ? "done" : ""}" style="--c:${tpColor(t)}">
+        <div class="row" style="justify-content:space-between"><span class="n">TP${String(t.num).padStart(2, "0")}</span>${done.has(t.id) ? `<span class="badge b-fait">✓</span>` : ""}</div>
+        ${GFX.icon(ICONES[t.id][0], ICONES[t.id][1])}
+        <div class="t">${esc(t.titre)}</div>
+        ${statutBadge(t.id)}
+        ${l ? `<div class="small muted" style="margin-top:4px">${esc(l.prenom)} ${esc((l.nom || "").charAt(0))}.</div>` : ""}
+      </div>`;
+    }).join("")}</div>
+  </div>`;
+}
+
+function viewComposants() {
+  return `
+  <div class="card">
+    <h2>🔍 La carte Arduino Uno</h2>
+    <p>L'Arduino Uno est une petite carte programmable. Tu écris un programme sur l'ordinateur, il est envoyé dans le microcontrôleur, puis la carte commande des LED, des moteurs ou lit des capteurs grâce à ses <b>broches</b>.</p>
+    <div class="figure">${GFX.arduinoAnnote()}</div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h2>🟫 La platine d'essai (breadboard)</h2>
+    <div class="grid2" style="align-items:center">
+      <div class="figure">${GFX.breadboard(true, "schema")}</div>
+      <div>
+        <p>Elle permet de brancher les composants <b>sans soudure</b>. Les trous sont reliés en dessous par des lamelles métalliques :</p>
+        <ul>
+          <li><span class="dot" style="background:#2e9d4f"></span><b>Colonnes de 5 trous</b> (a→e et f→j) : les 5 trous d'une même colonne sont reliés.</li>
+          <li><span class="dot" style="background:#e53935"></span><b>Ligne rouge +</b> : on y branche le 5V, toute la ligne est reliée.</li>
+          <li><span class="dot" style="background:#1e63d6"></span><b>Ligne bleue −</b> : on y branche le GND (la masse).</li>
+          <li><span class="dot" style="background:#9e9a8c"></span>La <b>rainure centrale</b> sépare les deux moitiés : idéal pour un bouton-poussoir.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h2>🧩 Les composants de l'atelier</h2>
+    <div class="comp-grid">${COMPOSANTS.map(c => `
+      <div class="comp-card" style="--c:${c.c}">
+        <div class="pic">${GFX.icon(c.type, c.opts)}</div>
+        <div class="bd"><h4>${esc(c.nom)}</h4><div class="small">${esc(c.role)}</div><div class="tip">💡 ${esc(c.tip)}</div>
+        <div class="small muted" style="margin-top:6px">Utilisé dans : ${TPS.filter(t => SCHEMAS[t.id].comps.some(x => x.type === c.type)).map(t => "TP" + t.num).join(", ")}</div></div>
+      </div>`).join("")}
+    </div>
+  </div>`;
+}
+
+function viewGuide() {
+  return `
+  <div class="card">
+    <h2>Prise en main de Tinkercad Circuits</h2>
+    <div class="grid2">
+      <div>
+        <h3>1. Se connecter</h3>
+        <ol class="steps-guide">
+          <li>Va sur <a href="https://www.tinkercad.com" target="_blank" rel="noopener">tinkercad.com</a> et connecte-toi (code de classe ou compte donné par le professeur).</li>
+          <li>Dans le menu de gauche, choisis <b>Circuits</b>, puis <b>Créer → Circuit</b>.</li>
+          <li>Renomme ton circuit en haut à gauche : <span class="kbd">TP03 - Prénom Nom</span>.</li>
+        </ol>
+        <h3>2. Construire le montage</h3>
+        <ol class="steps-guide">
+          <li>Dans la liste des composants (à droite), cherche « Arduino Uno R3 » et glisse-le sur le plan de travail.</li>
+          <li>Ajoute une <b>platine d'essai</b> et les composants du TP (utilise la barre de recherche).</li>
+          <li>Clique sur une broche puis sur une autre pour tirer un <b>fil</b>. Change sa couleur : rouge = 5V, noir = GND.</li>
+          <li><b>Survole</b> une patte ou une broche pour afficher son nom (anode, cathode, Vout…).</li>
+          <li>Clique sur un composant pour modifier sa valeur (ex. résistance 220 Ω).</li>
+        </ol>
+      </div>
+      <div>
+        <h3>3. Programmer</h3>
+        <ol class="steps-guide">
+          <li>Clique sur <b>Code</b>, puis passe de « Blocs » à <b>« Texte »</b> (accepte le message).</li>
+          <li>Efface le code existant et colle celui du TP (bouton <b>Copier</b>).</li>
+          <li>Le <b>Moniteur série</b> s'ouvre en bas de la fenêtre de code.</li>
+        </ol>
+        <h3>4. Simuler</h3>
+        <ol class="steps-guide">
+          <li>Clique sur <b>Démarrer la simulation</b>.</li>
+          <li>Pendant la simulation, tu peux cliquer sur les capteurs (bouton, potentiomètre, photorésistance, TMP36, ultrasons) pour les faire varier.</li>
+          <li>En cas d'erreur de code, un message apparaît : lis le numéro de ligne !</li>
+        </ol>
+        <h3>5. Rendre</h3>
+        <ol class="steps-guide">
+          <li>Clique sur <b>Partager</b> pour copier le lien de ton circuit et colle-le dans ton espace élève.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="alert warn">⚠️ Règles d'or : toujours une résistance avec une LED · toujours relier les GND ensemble · vérifier le câblage <b>avant</b> de lancer la simulation.</div>
+  </div>`;
+}
+
+function viewProf() {
+  if (!estProf()) {
+    return `<div class="card" style="max-width:460px"><h2>Espace professeur</h2>
+      <form data-form="pin"><label for="f-pin">Code professeur</label>
+      <input id="f-pin" type="password" autocomplete="off" data-bind="pin" value="${esc(S.pin)}" placeholder="Code professeur">
+      ${S.pinErr ? `<div class="alert err small">${esc(S.pinErr)}</div>` : ""}
+      <div style="margin-top:14px"><button class="btn" type="submit" ${S.pinBusy ? "disabled" : ""}>${S.pinBusy ? "Vérification…" : "Entrer"}</button></div></form>
+      <p class="muted small">Le code est vérifié par le serveur Google. Après 5 codes faux, l'espace est bloqué 10 minutes.</p></div>`;
+  }
+  const aValider = TPS.filter(t => { const l = lockOf(t.id); return l && l.statut === "a_valider"; });
+  const enCours = TPS.filter(t => { const l = lockOf(t.id); return l && l.statut === "en_cours"; });
+  const eleves = elevesTries();
+  const totalVal = Object.keys(Store.data.validations).length;
+  const dis = S.busy ? "disabled" : "";
+
+  const queue = aValider.length ? aValider.map(t => {
+    const l = lockOf(t.id);
+    return `<div class="card" style="padding:14px;margin-bottom:10px">
+      <div class="row" style="justify-content:space-between">
+        <div><b>TP${t.num} · ${esc(t.titre)}</b><div class="small muted">${esc(l.prenom)} ${esc(l.nom)} (${esc(l.code)}) · rendu le ${fmtDate(l.rendu)}</div>
+        ${l.lien ? `<div class="small"><a href="${esc(l.lien)}" target="_blank" rel="noopener">Ouvrir le circuit Tinkercad ↗</a></div>` : `<div class="small muted">Pas de lien fourni : vérifier sur le poste de l'élève.</div>`}</div>
+        <div class="row"><button class="btn green sm" data-action="valider" data-tp="${t.id}" ${dis}>✔ Valider</button></div>
+      </div>
+      <div class="row" style="margin-top:8px"><input type="text" maxlength="300" style="flex:1;min-width:200px" data-bind-rem="${t.id}" value="${esc(S.remarques[t.id] || "")}" placeholder="Remarque si le TP est à reprendre…">
+      <button class="btn red sm" data-action="refuser" data-tp="${t.id}" ${dis}>↩ À reprendre</button></div>
+    </div>`;
+  }).join("") : `<p class="muted">Aucune demande de validation pour le moment.</p>`;
+
+  const matrix = eleves.length ? `<div class="matrix"><table>
+    <tr><th>Élève</th>${TPS.map(t => `<th style="text-align:center" title="${esc(t.titre)}">${t.num}</th>`).join("")}<th>Total</th><th></th></tr>
+    ${eleves.map(e => {
+      const d = doneOf(e.code);
+      const cur = currentTpOf(e.code); const cl = cur ? lockOf(cur.id) : null;
+      return `<tr><td><b>${esc(e.prenom)} ${esc(e.nom)}</b><div class="small muted mono">${esc(e.code)} · n°${(e.rang || 0) + 1}</div></td>
+      ${TPS.map(t => {
+        if (d.has(t.id)) return `<td class="c c-ok" title="Validé">✓</td>`;
+        if (cur && cur.id === t.id) return cl.statut === "a_valider" ? `<td class="c c-val" title="À valider">⏳</td>` : `<td class="c c-cours" title="En cours">●</td>`;
+        return `<td class="c"></td>`;
+      }).join("")}
+      <td><b>${d.size}</b>/${NB}</td>
+      <td><button class="btn ghost sm" data-action="ask-del-eleve" data-code="${esc(e.code)}" title="Supprimer l'élève">✕</button></td></tr>`;
+    }).join("")}
+  </table></div>
+  <p class="small muted">✓ validé · ● en cours · ⏳ en attente de validation. Le n° d'élève fixe son TP de départ (élève n°1 → TP1, n°2 → TP2…).</p>` : `<p class="muted">Aucun élève inscrit pour l'instant.</p>`;
+
+  const cours = enCours.length ? `<table><tr><th>TP</th><th>Élève</th><th>Depuis</th><th></th></tr>${enCours.map(t => {
+    const l = lockOf(t.id);
+    return `<tr><td>TP${t.num} · ${esc(t.titre)}</td><td>${esc(l.prenom)} ${esc(l.nom)}</td><td class="small">${fmtDate(l.debut)}</td>
+      <td><button class="btn ghost sm" data-action="ask-liberer" data-tp="${t.id}">Libérer</button></td></tr>`;
+  }).join("")}</table>` : `<p class="muted">Aucun TP en cours.</p>`;
+
+  const recent = Object.entries(Store.data.validations).sort((a, b) => (b[1].date || 0) - (a[1].date || 0)).slice(0, 8);
+  const journal = Store.data.journal.slice(0, 12);
+
+  return `
+  <div class="row" style="justify-content:space-between;margin-bottom:14px">
+    <h2 style="margin:0">Espace professeur</h2>
+    <div class="row small"><span class="badge b-valid">${aValider.length} à valider</span><span class="badge b-cours">${enCours.length} en cours</span><span class="badge b-fait">${totalVal} validations</span></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">Demandes de validation</h3>${queue}</div>
+    <div class="card"><h3 style="margin-top:0">TP en cours</h3>${cours}
+      <p class="small muted">« Libérer » rend un TP disponible sans le valider (élève absent, par exemple).</p>
+      ${recent.length ? `<h3>Dernières validations</h3><ul class="small">${recent.map(([id, v]) => `<li>${fmtDate(v.date)} : ${esc(v.prenom)}, TP${TP_BY_ID[v.tp] ? TP_BY_ID[v.tp].num : "?"} <button class="btn ghost sm" style="padding:1px 6px" data-action="ask-annuler-val" data-id="${esc(id)}" title="Annuler cette validation">annuler</button></li>`).join("")}</ul>` : ""}
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px"><h3 style="margin-top:0">Progression de la classe</h3>${matrix}</div>
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">🔗 Adresse de l'atelier à donner aux élèves</h3>
+    <div class="row"><input type="text" readonly value="${esc(Store.adresse)}" style="flex:1;min-width:260px" class="mono">
+      <button class="btn sm" data-action="copy-adresse">Copier l'adresse</button></div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">📊 Feuille Google Sheets (enregistrement automatique)</h3>
+    <p class="small">Tout est enregistré automatiquement, avec la date : ${Store.url ? `<a href="${esc(Store.url)}" target="_blank" rel="noopener"><b>ouvrir la feuille ↗</b></a>` : "feuille de l'atelier"}.</p>
+    <ul class="small">
+      <li><b>Élèves</b> : code, nom, prénom, n° d'élève, date d'inscription.</li>
+      <li><b>TP en cours</b> : qui fait quel TP, statut, dates, lien Tinkercad, remarque.</li>
+      <li><b>Validations</b> : chaque TP validé, avec les dates et la durée.</li>
+      <li><b>Journal</b> : tous les événements datés (inscription, TP pris, rendu, validé, à reprendre…).</li>
+      <li><b>Progression</b> et <b>Sujets des TP</b>.</li>
+    </ul>
+    <p class="small muted">Les onglets sont protégés : seul votre compte peut les modifier. Les élèves ne voient jamais la feuille.</p>
+    ${journal.length ? `<h3>Derniers événements</h3><table class="small"><tr><th>Date</th><th>Événement</th><th>Élève</th><th>TP</th></tr>${journal.map(j => `<tr><td>${fmtDate(j.date)}</td><td>${esc(j.evt)}</td><td>${esc(j.prenom)} ${esc(j.nom)}</td><td>${j.num ? "TP" + esc(j.num) : ""}</td></tr>`).join("")}</table>` : ""}
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Consulter un TP</h3>
+    <div class="chips">${TPS.map(t => `<button class="btn ${S.profTp === t.id ? "" : "ghost"} sm" data-action="prof-tp" data-tp="${t.id}">TP${t.num}</button>`).join("")}</div>
+    ${S.profTp ? `<div class="section-sep"></div>${viewTpDetail(TP_BY_ID[S.profTp])}<h3>Critères de validation</h3><ul>${TP_BY_ID[S.profTp].criteres.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h3 style="margin-top:0">Réglages</h3>
+    <div class="row" style="margin-bottom:12px">
+      <span class="small"><b>Inscriptions :</b> ${Store.inscriptionLibre ? "libres (tout nouveau code est accepté)" : "fermées (seuls les codes de l'onglet Élèves sont acceptés)"}</span>
+      <button class="btn ghost sm" data-action="toggle-inscription" ${dis}>${Store.inscriptionLibre ? "Fermer les inscriptions" : "Ouvrir les inscriptions"}</button>
+    </div>
+    <form data-form="newpin" class="row"><input type="password" autocomplete="new-password" data-bind="newpin" value="${esc(S.newpin || "")}" placeholder="Nouveau code professeur" style="max-width:240px"><button class="btn ghost sm" type="submit">Changer le code</button><button class="btn ghost sm" type="button" data-action="prof-logout">Quitter l'espace prof</button></form>
+    <p class="small muted">Le code professeur n'est jamais écrit en clair : le serveur ne garde qu'une empreinte codée.</p>
+    <div style="margin-top:12px"><button class="btn red sm" data-action="ask-reset">Réinitialiser tout l'atelier</button></div>
+  </div>`;
+}
+
+function renderModal() {
+  const o = document.getElementById("overlay");
+  if (!S.modal) { o.innerHTML = ""; return; }
+  o.innerHTML = `<div class="modal-bg"><div class="modal"><h3 style="margin-top:0">${esc(S.modal.titre)}</h3><p>${esc(S.modal.texte)}</p>
+    <div class="row" style="justify-content:flex-end"><button class="btn ghost" data-action="modal-no">Annuler</button><button class="btn red" data-action="modal-yes">Confirmer</button></div></div></div>`;
+}
+
+function render() {
+  renderTabs(); renderFoot(); renderModal();
+  const app = document.getElementById("app");
+  if (Store.mode === "init" && S.view !== "guide" && S.view !== "composants") {
+    app.innerHTML = Store.erreur
+      ? `<div class="card"><h2>⚠️ Le serveur de l'atelier a répondu par une erreur</h2>
+          <div class="alert err"><b>Message :</b> ${esc(Store.erreur)}</div>
+          <p><b>Pour le professeur :</b></p>
+          <ol class="steps">
+            <li>Ouvrez la feuille Google Sheets, puis <b>Extensions → Apps Script</b>.</li>
+            <li>En haut de l'éditeur, choisissez la fonction <b>installer</b> et cliquez sur <b>Exécuter</b> (acceptez les autorisations).</li>
+            <li>Vérifiez que la feuille contient les onglets <b>Élèves, TP en cours, Validations, Journal, Progression, Sujets des TP</b>.</li>
+            <li>Rechargez cette page. Si l'erreur continue, envoyez ce message au support de l'atelier.</li>
+          </ol>
+          <p class="small muted">Nouvel essai automatique toutes les 6 secondes.</p></div>`
+      : `<div class="card">Chargement de l'atelier…</div>`;
+    return;
+  }
+  let html = "";
+  if (S.view === "eleve") html = viewEleve();
+  else if (S.view === "guide") html = viewGuide();
+  else if (S.view === "composants") html = viewComposants();
+  else if (S.view === "tps") html = viewTableau();
+  else if (S.view === "prof") html = viewProf();
+  else html = S.me ? viewEleve() : viewAccueil();
+  app.innerHTML = html;
+}
+
+/* =========================================================
+   5. ÉVÉNEMENTS
+   ========================================================= */
+document.addEventListener("input", e => {
+  const b = e.target.getAttribute("data-bind");
+  if (b) {
+    const parts = b.split(".");
+    if (parts.length === 2) S[parts[0]][parts[1]] = e.target.value; else S[b] = e.target.value;
+  }
+  const r = e.target.getAttribute("data-bind-rem");
+  if (r) S.remarques[r] = e.target.value;
+});
+
+document.addEventListener("submit", e => {
+  e.preventDefault();
+  const f = e.target.getAttribute("data-form");
+  if (f === "login") connexion();
+  if (f === "pin") connexionProf();
+  if (f === "newpin") changerCodeProf();
+});
+
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-action]");
+  if (!el) return;
+  const a = el.getAttribute("data-action");
+  const tp = el.getAttribute("data-tp");
+  switch (a) {
+    case "nav": S.view = el.getAttribute("data-v"); if (S.view === "accueil" && S.me) S.view = "eleve"; render(); window.scrollTo(0, 0); break;
+    case "logout": deconnexion(); break;
+    case "check": {
+      const i = +el.getAttribute("data-i");
+      S.checks[tp][i] = el.checked; render(); break;
+    }
+    case "demander": await demanderValidation(tp); break;
+    case "annuler-demande": await annulerDemande(tp); break;
+    case "copy": {
+      const code = TP_BY_ID[tp].code;
+      try { await navigator.clipboard.writeText(code); toast("Code copié ! Colle-le dans Tinkercad (Code → Texte)."); }
+      catch (err) {
+        const pre = el.parentElement.querySelector("pre");
+        const range = document.createRange(); range.selectNodeContents(pre);
+        const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+        toast("Le code est sélectionné : fais Ctrl+C pour le copier.");
+      }
+      break;
+    }
+    case "copy-adresse":
+      try { await navigator.clipboard.writeText(Store.adresse); toast("Adresse copiée : envoyez-la aux élèves."); }
+      catch (err) { const i = el.parentElement.querySelector("input"); i.select(); toast("Adresse sélectionnée : faites Ctrl+C."); }
+      break;
+    case "valider": await valider(tp); break;
+    case "refuser": await refuser(tp); break;
+    case "toggle-inscription": await basculerInscription(); break;
+    case "prof-tp": S.profTp = S.profTp === tp ? null : tp; render(); break;
+    case "prof-logout": S.prof = false; S.pinActif = ""; Store.data.eleves = {}; Store.data.validations = {}; render(); rafraichir(); break;
+    case "ask-annuler-val": {
+      const id = el.getAttribute("data-id");
+      S.modal = {titre: "Annuler cette validation ?", texte: "Le TP sera retiré des validations de l'élève (la ligne est supprimée de l'onglet Validations, le journal garde une trace).", run: () => annulerValidation(id)}; render(); break;
+    }
+    case "ask-liberer":
+      S.modal = {titre: "Libérer le TP" + TP_BY_ID[tp].num + " ?", texte: "Le TP redeviendra libre sans être validé. L'élève devra le refaire plus tard.", run: () => liberer(tp)}; render(); break;
+    case "ask-del-eleve": {
+      const code = el.getAttribute("data-code"); const ev = Store.data.eleves[code];
+      S.modal = {titre: "Supprimer " + (ev ? ev.prenom + " " + ev.nom : code) + " ?", texte: "Sa ligne, ses validations et son TP en cours seront effacés de la feuille. Le journal garde une trace.", run: () => supprimerEleve(code)}; render(); break;
+    }
+    case "ask-reset":
+      S.modal = {titre: "Réinitialiser tout l'atelier ?", texte: "Les élèves, les TP en cours et les validations seront effacés de la feuille Google Sheets. Le journal est conservé. Cette action est définitive.", run: () => toutReinitialiser()}; render(); break;
+    case "modal-no": S.modal = null; render(); break;
+    case "modal-yes": { const m = S.modal; S.modal = null; render(); if (m && m.run) await m.run(); break; }
+  }
+});
+
+document.body.insertAdjacentHTML("afterbegin", GFX.defs());
+(function demarrer() {
+  try {
+    const m = JSON.parse(localStorage.getItem(MEMO) || "null");
+    if (m && m.code) { S.me = {nom: m.nom, prenom: m.prenom, code: m.code, rang: 0}; S.view = "eleve"; }
+  } catch (e) {}
+  render();
+  rafraichir();
+})();
+</script>
+</body>
+</html>
